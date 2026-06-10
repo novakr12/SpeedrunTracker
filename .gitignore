@@ -1,6 +1,12 @@
 node_modules/
 dist/
 .env
+.env.local
 .angular/
 *.log
+*.tsbuildinfo
+coverage/
 .DS_Store
+Thumbs.db
+.vscode/
+.idea/

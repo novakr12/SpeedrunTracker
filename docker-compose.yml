@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: speedrun-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: speedrun
+      POSTGRES_PASSWORD: speedrun
+      POSTGRES_DB: speedrun
+    ports:
+      - "5432:5432"
+    volumes:
+      - speedrun-data:/var/lib/postgresql/data
+
+volumes:
+  speedrun-data:

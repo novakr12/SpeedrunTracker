@@ -1,0 +1,16 @@
+{
+  "name": "speedruntracker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SpeedrunTracker - track speedrun attempts across games & categories (RxJS + Angular + NestJS)",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "backend": "npm run start:dev --workspace backend",
+    "frontend": "npm start --workspace frontend"
+  }
+}
