@@ -18,7 +18,6 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  // Excluded from default selects; only loaded explicitly during auth.
   @Column({ select: false })
   password: string;
 

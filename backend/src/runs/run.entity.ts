@@ -10,7 +10,6 @@ import { User } from '../users/user.entity';
 import { Game } from '../games/game.entity';
 import { Category } from '../categories/category.entity';
 
-// A single speedrun attempt submitted by a user.
 @Entity('runs')
 export class Run {
   @PrimaryGeneratedColumn('uuid')
@@ -39,7 +38,6 @@ export class Run {
   @Column()
   categoryId: string;
 
-  // Run duration in milliseconds (basis for leaderboard ranking).
   @Column({ type: 'int' })
   timeMs: number;
 
