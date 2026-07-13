@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from './users/users.module';
+import { GamesModule } from './games/games.module';
+import { CategoriesModule } from './categories/categories.module';
+import { RunsModule } from './runs/runs.module';
 
 @Module({
   imports: [
@@ -15,9 +19,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         password: config.get('DB_PASSWORD', 'speedrun'),
         database: config.get('DB_NAME', 'speedrun'),
         autoLoadEntities: true,
-        synchronize: true, // dev only
+        synchronize: true,
       }),
     }),
+    UsersModule,
+    GamesModule,
+    CategoriesModule,
+    RunsModule,
   ],
 })
 export class AppModule {}
