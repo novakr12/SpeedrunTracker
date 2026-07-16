@@ -9,9 +9,6 @@ import {
 
 export class CreateRunDto {
   @IsUUID()
-  userId: string;
-
-  @IsUUID()
   gameId: string;
 
   @IsUUID()

@@ -8,18 +8,22 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { RunsService } from './runs.service';
 import { CreateRunDto } from './dto/create-run.dto';
 import { UpdateRunDto } from './dto/update-run.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CurrentUser, AuthUser } from '../auth/decorators/current-user.decorator';
 
 @Controller('runs')
 export class RunsController {
   constructor(private readonly runsService: RunsService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() dto: CreateRunDto) {
-    return this.runsService.create(dto);
+  create(@CurrentUser() user: AuthUser, @Body() dto: CreateRunDto) {
+    return this.runsService.create(user.userId, dto);
   }
 
   @Get()
@@ -32,6 +36,7 @@ export class RunsController {
     return this.runsService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -40,6 +45,7 @@ export class RunsController {
     return this.runsService.update(id, dto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @HttpCode(204)
   remove(@Param('id', ParseUUIDPipe) id: string) {

@@ -22,10 +22,11 @@ export class RunsService {
     private readonly categoriesService: CategoriesService,
   ) {}
 
-  async create(dto: CreateRunDto): Promise<Run> {
-    await this.validateReferences(dto.userId, dto.gameId, dto.categoryId);
+  async create(userId: string, dto: CreateRunDto): Promise<Run> {
+    await this.validateReferences(userId, dto.gameId, dto.categoryId);
     const run = this.runsRepository.create({
       ...dto,
+      userId,
       playedAt: dto.playedAt ? new Date(dto.playedAt) : undefined,
     });
     return this.runsRepository.save(run);
@@ -50,12 +51,12 @@ export class RunsService {
   }
 
   async update(id: string, dto: UpdateRunDto): Promise<Run> {
-    if (dto.userId || dto.gameId || dto.categoryId) {
-      const run = await this.findOne(id);
+    if (dto.gameId || dto.categoryId) {
+      const existing = await this.findOne(id);
       await this.validateReferences(
-        dto.userId ?? run.userId,
-        dto.gameId ?? run.gameId,
-        dto.categoryId ?? run.categoryId,
+        existing.userId,
+        dto.gameId ?? existing.gameId,
+        dto.categoryId ?? existing.categoryId,
       );
     }
     const run = await this.runsRepository.preload({
