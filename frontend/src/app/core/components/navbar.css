@@ -1,0 +1,46 @@
+nav {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  padding: 0.85rem 1.5rem;
+  background: #171a22;
+  border-bottom: 1px solid #262b36;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #e6e6e6;
+}
+
+nav a {
+  color: #aab2c0;
+  font-size: 0.9rem;
+}
+
+nav a.active {
+  color: var(--accent);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.user {
+  color: #e6e6e6;
+  font-size: 0.9rem;
+}
+
+button {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid #2c3340;
+  border-radius: 8px;
+  background: transparent;
+  color: #e6e6e6;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+button:hover {
+  border-color: var(--accent);
+}

@@ -1,32 +1,38 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { NavbarComponent } from './core/components/navbar.component';
+import { AuthActions } from './store/auth/auth.actions';
+import { AuthUser } from './core/models/auth.model';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, NavbarComponent],
   template: `
-    <header>
-      <h1>🏁 SpeedrunTracker</h1>
-    </header>
+    <app-navbar />
     <main>
       <router-outlet />
     </main>
   `,
   styles: [
     `
-      header {
-        padding: 1rem 1.5rem;
-        border-bottom: 1px solid #222;
-      }
-      h1 {
-        margin: 0;
-        font-size: 1.4rem;
-      }
       main {
-        padding: 1.5rem;
+        max-width: 1000px;
+        margin: 0 auto;
       }
     `,
   ],
 })
-export class AppComponent {}
+export class AppComponent implements OnInit {
+  private readonly store = inject(Store);
+
+  ngOnInit(): void {
+    const token = localStorage.getItem('token');
+    const rawUser = localStorage.getItem('user');
+    if (token && rawUser) {
+      const user = JSON.parse(rawUser) as AuthUser;
+      this.store.dispatch(AuthActions.restoreSession({ token, user }));
+    }
+  }
+}
