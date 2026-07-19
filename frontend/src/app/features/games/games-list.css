@@ -1,0 +1,64 @@
+.page {
+  padding: 1.5rem;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+header h1 {
+  margin: 0;
+}
+
+.search {
+  padding: 0.55rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #2c3340;
+  background: #0f1117;
+  color: #e6e6e6;
+  min-width: 220px;
+}
+
+.add {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.add input {
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #2c3340;
+  background: #0f1117;
+  color: #e6e6e6;
+}
+
+.add button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.add button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.muted {
+  color: #6b7280;
+}

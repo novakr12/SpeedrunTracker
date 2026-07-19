@@ -1,0 +1,58 @@
+.page {
+  padding: 1.5rem;
+  max-width: 460px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: #aab2c0;
+}
+
+select,
+input {
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #2c3340;
+  background: #0f1117;
+  color: #e6e6e6;
+  font-size: 0.95rem;
+}
+
+.time-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.time-row label {
+  flex: 1;
+}
+
+button {
+  padding: 0.65rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.error {
+  margin: 0;
+  color: #ff6b6b;
+  font-size: 0.85rem;
+}

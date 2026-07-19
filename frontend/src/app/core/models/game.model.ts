@@ -14,3 +14,10 @@ export interface Game {
   categories?: Category[];
   createdAt?: string;
 }
+
+export interface CreateGameDto {
+  title: string;
+  platform?: string;
+  releaseYear?: number;
+  coverImage?: string;
+}

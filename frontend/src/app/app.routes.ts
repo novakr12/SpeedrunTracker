@@ -23,5 +23,29 @@ export const routes: Routes = [
         (m) => m.DashboardComponent,
       ),
   },
+  {
+    path: 'games',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/games/games-list.component').then(
+        (m) => m.GamesListComponent,
+      ),
+  },
+  {
+    path: 'runs',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/runs/runs-list.component').then(
+        (m) => m.RunsListComponent,
+      ),
+  },
+  {
+    path: 'runs/new',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/runs/run-form.component').then(
+        (m) => m.RunFormComponent,
+      ),
+  },
   { path: '**', redirectTo: 'dashboard' },
 ];

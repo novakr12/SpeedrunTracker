@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { catchError, exhaustMap, map, of, tap } from 'rxjs';
 import { AuthActions } from './auth.actions';
 import { AuthService } from '../../core/services/auth.service';
+import { toMessage } from '../../core/utils/http-error';
 
 @Injectable()
 export class AuthEffects {
@@ -64,13 +65,4 @@ export class AuthEffects {
       ),
     { dispatch: false },
   );
-}
-
-function toMessage(err: unknown): string {
-  const message = (err as { error?: { message?: string | string[] } })?.error
-    ?.message;
-  if (Array.isArray(message)) {
-    return message.join(', ');
-  }
-  return message ?? 'Request failed';
 }
