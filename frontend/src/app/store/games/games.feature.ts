@@ -43,10 +43,22 @@ export const gamesFeature = createFeature({
       selectFilteredGames: createSelector(
         selectAll,
         selectSearch,
-        (games, search) =>
-          games.filter((game) =>
-            game.title.toLowerCase().includes(search.trim().toLowerCase()),
-          ),
+        (games, search) => {
+          const term = search.trim().toLowerCase();
+          if (!term) {
+            return games;
+          }
+          return games.filter((game) => {
+            const inTitle = game.title.toLowerCase().includes(term);
+            const inTags = (game.tags ?? []).some((tag) =>
+              tag.toLowerCase().includes(term),
+            );
+            const inPlatforms = (game.platforms ?? []).some((platform) =>
+              platform.toLowerCase().includes(term),
+            );
+            return inTitle || inTags || inPlatforms;
+          });
+        },
       ),
     };
   },

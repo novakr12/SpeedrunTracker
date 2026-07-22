@@ -16,8 +16,11 @@ export class Game {
   @Column()
   title: string;
 
-  @Column({ nullable: true })
-  platform: string;
+  @Column('simple-array', { nullable: true })
+  platforms: string[];
+
+  @Column('simple-array', { nullable: true })
+  tags: string[];
 
   @Column({ type: 'int', nullable: true })
   releaseYear: number;

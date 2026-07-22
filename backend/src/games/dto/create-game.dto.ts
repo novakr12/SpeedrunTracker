@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsInt,
   IsOptional,
   IsString,
@@ -13,8 +14,14 @@ export class CreateGameDto {
   title: string;
 
   @IsOptional()
-  @IsString()
-  platform?: string;
+  @IsArray()
+  @IsString({ each: true })
+  platforms?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tags?: string[];
 
   @IsOptional()
   @IsInt()

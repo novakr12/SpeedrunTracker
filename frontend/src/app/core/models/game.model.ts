@@ -8,7 +8,8 @@ export interface Category {
 export interface Game {
   id: string;
   title: string;
-  platform?: string;
+  platforms?: string[];
+  tags?: string[];
   releaseYear?: number;
   coverImage?: string;
   categories?: Category[];
@@ -17,7 +18,8 @@ export interface Game {
 
 export interface CreateGameDto {
   title: string;
-  platform?: string;
+  platforms?: string[];
+  tags?: string[];
   releaseYear?: number;
   coverImage?: string;
 }
