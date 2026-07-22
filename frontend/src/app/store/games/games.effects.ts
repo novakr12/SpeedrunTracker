@@ -37,4 +37,32 @@ export class GamesEffects {
       ),
     ),
   );
+
+  update$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(GamesActions.update),
+      concatMap(({ id, changes }) =>
+        this.gamesService.update(id, changes).pipe(
+          map((game) => GamesActions.updateSuccess({ game })),
+          catchError((err) =>
+            of(GamesActions.updateFailure({ error: toMessage(err) })),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  delete$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(GamesActions.delete),
+      concatMap(({ id }) =>
+        this.gamesService.delete(id).pipe(
+          map(() => GamesActions.deleteSuccess({ id })),
+          catchError((err) =>
+            of(GamesActions.deleteFailure({ error: toMessage(err) })),
+          ),
+        ),
+      ),
+    ),
+  );
 }

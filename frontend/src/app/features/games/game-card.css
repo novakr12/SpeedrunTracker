@@ -3,16 +3,14 @@
   border: 1px solid #262b36;
   border-radius: 12px;
   padding: 1rem;
-  cursor: pointer;
-  transition: border-color 0.15s ease, transform 0.15s ease;
+  transition: border-color 0.15s ease;
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
 }
 
 .card:hover {
-  border-color: var(--accent);
-  transform: translateY(-2px);
+  border-color: #33394a;
 }
 
 .cover {
@@ -45,14 +43,47 @@
   color: #aab2c0;
 }
 
-.cats {
-  margin: 0;
-  font-size: 0.75rem;
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.chip {
+  font-size: 0.72rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(108, 92, 231, 0.15);
   color: var(--accent);
+  border: 1px solid rgba(108, 92, 231, 0.4);
+}
+
+.chip.platform {
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.chip.tag {
+  background: rgba(148, 163, 184, 0.12);
+  color: #94a3b8;
+  border-color: rgba(148, 163, 184, 0.35);
+}
+
+.empty {
+  margin: 0;
+  font-size: 0.72rem;
+  color: #6b7280;
+}
+
+.actions {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
 }
 
 .card button {
-  margin-top: 0.5rem;
+  flex: 1;
   padding: 0.4rem;
   border: 1px solid #2c3340;
   border-radius: 8px;
@@ -64,4 +95,70 @@
 
 .card button:hover {
   border-color: var(--accent);
+}
+
+.card button.danger {
+  color: #ff6b6b;
+  border-color: rgba(255, 107, 107, 0.4);
+}
+
+.card button.danger:hover {
+  border-color: #ff6b6b;
+}
+
+.pf {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  color: #aab2c0;
+  cursor: pointer;
+}
+
+.platforms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+
+.tags-input {
+  margin-top: 0.5rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #2c3340;
+  background: #0f1117;
+  color: #e6e6e6;
+  font-size: 0.85rem;
+}
+
+.cat-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid #262b36;
+}
+
+.cat-row {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.cat-row input {
+  flex: 1;
+  padding: 0.35rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #2c3340;
+  background: #0f1117;
+  color: #e6e6e6;
+  font-size: 0.82rem;
+}
+
+.cat-row button {
+  margin: 0;
+  flex: 0 0 auto;
+  padding: 0.35rem 0.6rem;
 }

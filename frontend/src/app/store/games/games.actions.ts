@@ -1,5 +1,9 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { CreateGameDto, Game } from '../../core/models/game.model';
+import {
+  CreateGameDto,
+  Game,
+  UpdateGameDto,
+} from '../../core/models/game.model';
 
 export const GamesActions = createActionGroup({
   source: 'Games',
@@ -10,6 +14,12 @@ export const GamesActions = createActionGroup({
     Create: props<{ dto: CreateGameDto }>(),
     'Create Success': props<{ game: Game }>(),
     'Create Failure': props<{ error: string }>(),
+    Update: props<{ id: string; changes: UpdateGameDto }>(),
+    'Update Success': props<{ game: Game }>(),
+    'Update Failure': props<{ error: string }>(),
+    Delete: props<{ id: string }>(),
+    'Delete Success': props<{ id: string }>(),
+    'Delete Failure': props<{ error: string }>(),
     'Set Search': props<{ search: string }>(),
   },
 });

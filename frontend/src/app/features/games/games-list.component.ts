@@ -9,13 +9,17 @@ import {
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
-import { GameCardComponent } from './game-card.component';
-import { Game } from '../../core/models/game.model';
+import { GameCardComponent, GameUpdate } from './game-card.component';
+import { Category, Game } from '../../core/models/game.model';
+import { PLATFORMS } from '../../shared/platforms';
 import { GamesActions } from '../../store/games/games.actions';
 import {
   selectFilteredGames,
   selectGamesLoading,
 } from '../../store/games/games.feature';
+import { CategoriesActions } from '../../store/categories/categories.actions';
+import { selectCategoriesByGame } from '../../store/categories/categories.feature';
+import { selectIsAdmin } from '../../store/auth/auth.feature';
 
 @Component({
   selector: 'app-games-list',
@@ -33,16 +37,53 @@ import {
         />
       </header>
 
-      <form class="add" [formGroup]="addForm" (ngSubmit)="addGame()">
-        <input type="text" placeholder="Title" formControlName="title" />
-        <input type="text" placeholder="Platform" formControlName="platform" />
-        <input
-          type="number"
-          placeholder="Year"
-          formControlName="releaseYear"
-        />
+      @if (isAdmin$ | async) {
+      <form class="add-game" [formGroup]="addForm" (ngSubmit)="addGame()">
+        <div class="row">
+          <input type="text" placeholder="Title" formControlName="title" />
+          <input
+            type="number"
+            placeholder="Year"
+            formControlName="releaseYear"
+          />
+          <input
+            type="text"
+            placeholder="Tags (comma separated)"
+            formControlName="tags"
+          />
+        </div>
+        <div class="platforms">
+          @for (platform of platforms; track platform) {
+            <label class="pf">
+              <input
+                type="checkbox"
+                [checked]="selectedPlatforms.has(platform)"
+                (change)="togglePlatform(platform, $any($event.target).checked)"
+              />
+              {{ platform }}
+            </label>
+          }
+        </div>
         <button type="submit" [disabled]="addForm.invalid">Add game</button>
       </form>
+
+      <form class="add" [formGroup]="categoryForm" (ngSubmit)="addCategory()">
+        <select formControlName="gameId">
+          <option value="">— choose game —</option>
+          @for (game of games$ | async; track game.id) {
+            <option [value]="game.id">{{ game.title }}</option>
+          }
+        </select>
+        <input
+          type="text"
+          placeholder="Category (e.g. 100%)"
+          formControlName="name"
+        />
+        <button type="submit" [disabled]="categoryForm.invalid">
+          Add category
+        </button>
+      </form>
+      }
 
       @if (loading$ | async) {
         <p class="muted">Loading…</p>
@@ -50,7 +91,16 @@ import {
 
       <div class="grid">
         @for (game of games$ | async; track game.id) {
-          <app-game-card [game]="game" (select)="onSelect($event)" />
+          <app-game-card
+            [game]="game"
+            [categories]="categoriesByGame[game.id] || []"
+            [canManage]="(isAdmin$ | async) ?? false"
+            (select)="onSelect($event)"
+            (remove)="onRemove($event)"
+            (update)="onUpdate($event)"
+            (categoryUpdate)="onCategoryUpdate($event)"
+            (categoryDelete)="onCategoryDelete($event)"
+          />
         } @empty {
           <p class="muted">No games found.</p>
         }
@@ -67,27 +117,72 @@ export class GamesListComponent implements OnInit, OnDestroy {
 
   readonly games$ = this.store.select(selectFilteredGames);
   readonly loading$ = this.store.select(selectGamesLoading);
+  readonly isAdmin$ = this.store.select(selectIsAdmin);
 
   readonly search = new FormControl('', { nonNullable: true });
 
+  readonly platforms = PLATFORMS;
+  readonly selectedPlatforms = new Set<string>();
+
   readonly addForm = this.fb.nonNullable.group({
     title: ['', [Validators.required]],
-    platform: [''],
     releaseYear: this.fb.control<number | null>(null),
+    tags: [''],
   });
+
+  readonly categoryForm = this.fb.nonNullable.group({
+    gameId: ['', [Validators.required]],
+    name: ['', [Validators.required]],
+  });
+
+  categoriesByGame: Record<string, Category[]> = {};
 
   ngOnInit(): void {
     this.store.dispatch(GamesActions.load());
+    this.store.dispatch(CategoriesActions.load());
 
     this.search.valueChanges
       .pipe(debounceTime(250), distinctUntilChanged(), takeUntil(this.destroy$))
       .subscribe((search) =>
         this.store.dispatch(GamesActions.setSearch({ search })),
       );
+
+    this.store
+      .select(selectCategoriesByGame)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((grouped) => (this.categoriesByGame = grouped));
   }
 
   onSelect(game: Game): void {
     this.router.navigate(['/runs/new'], { queryParams: { gameId: game.id } });
+  }
+
+  onRemove(id: string): void {
+    this.store.dispatch(GamesActions.delete({ id }));
+  }
+
+  onUpdate(event: GameUpdate): void {
+    this.store.dispatch(
+      GamesActions.update({ id: event.id, changes: event.changes }),
+    );
+  }
+
+  onCategoryUpdate(event: { id: string; name: string }): void {
+    this.store.dispatch(
+      CategoriesActions.update({ id: event.id, changes: { name: event.name } }),
+    );
+  }
+
+  onCategoryDelete(id: string): void {
+    this.store.dispatch(CategoriesActions.delete({ id }));
+  }
+
+  togglePlatform(platform: string, checked: boolean): void {
+    if (checked) {
+      this.selectedPlatforms.add(platform);
+    } else {
+      this.selectedPlatforms.delete(platform);
+    }
   }
 
   addGame(): void {
@@ -95,16 +190,31 @@ export class GamesListComponent implements OnInit, OnDestroy {
       return;
     }
     const value = this.addForm.getRawValue();
+    const tags = value.tags
+      .split(',')
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.length > 0);
     this.store.dispatch(
       GamesActions.create({
         dto: {
           title: value.title,
-          platform: value.platform || undefined,
           releaseYear: value.releaseYear ?? undefined,
+          platforms: Array.from(this.selectedPlatforms),
+          tags,
         },
       }),
     );
     this.addForm.reset();
+    this.selectedPlatforms.clear();
+  }
+
+  addCategory(): void {
+    if (this.categoryForm.invalid) {
+      return;
+    }
+    const value = this.categoryForm.getRawValue();
+    this.store.dispatch(CategoriesActions.create({ dto: value }));
+    this.categoryForm.controls.name.reset();
   }
 
   ngOnDestroy(): void {

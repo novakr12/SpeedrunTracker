@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CreateGameDto, Game } from '../models/game.model';
+import { CreateGameDto, Game, UpdateGameDto } from '../models/game.model';
 
 @Injectable({ providedIn: 'root' })
 export class GamesService {
@@ -18,5 +18,13 @@ export class GamesService {
 
   create(dto: CreateGameDto): Observable<Game> {
     return this.http.post<Game>(this.base, dto);
+  }
+
+  update(id: string, dto: UpdateGameDto): Observable<Game> {
+    return this.http.patch<Game>(`${this.base}/${id}`, dto);
+  }
+
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.base}/${id}`);
   }
 }

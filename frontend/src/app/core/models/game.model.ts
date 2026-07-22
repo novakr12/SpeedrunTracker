@@ -23,3 +23,12 @@ export interface CreateGameDto {
   releaseYear?: number;
   coverImage?: string;
 }
+
+export type UpdateGameDto = Partial<CreateGameDto>;
+
+export interface CreateCategoryDto {
+  name: string;
+  gameId: string;
+}
+
+export type UpdateCategoryDto = Partial<CreateCategoryDto>;

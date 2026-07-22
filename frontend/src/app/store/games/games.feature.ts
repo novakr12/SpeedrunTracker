@@ -34,6 +34,14 @@ export const gamesFeature = createFeature({
       gamesAdapter.addOne(game, state),
     ),
     on(GamesActions.createFailure, (state, { error }) => ({ ...state, error })),
+    on(GamesActions.updateSuccess, (state, { game }) =>
+      gamesAdapter.upsertOne(game, state),
+    ),
+    on(GamesActions.updateFailure, (state, { error }) => ({ ...state, error })),
+    on(GamesActions.deleteSuccess, (state, { id }) =>
+      gamesAdapter.removeOne(id, state),
+    ),
+    on(GamesActions.deleteFailure, (state, { error }) => ({ ...state, error })),
     on(GamesActions.setSearch, (state, { search }) => ({ ...state, search })),
   ),
   extraSelectors: ({ selectGamesState, selectSearch }) => {
