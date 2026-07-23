@@ -27,8 +27,29 @@ export class UsersService {
     const user = this.usersRepository.create({
       ...dto,
       password: await bcrypt.hash(dto.password, 10),
+      role: 'user',
     });
     return this.usersRepository.save(user);
+  }
+
+  async ensureAdmin(
+    username: string,
+    email: string,
+    password: string,
+  ): Promise<void> {
+    const existing = await this.usersRepository.findOne({ where: { email } });
+    if (!existing) {
+      const admin = this.usersRepository.create({
+        username,
+        email,
+        password: await bcrypt.hash(password, 10),
+        role: 'admin',
+      });
+      await this.usersRepository.save(admin);
+    } else if (existing.role !== 'admin') {
+      existing.role = 'admin';
+      await this.usersRepository.save(existing);
+    }
   }
 
   findAll(): Promise<User[]> {

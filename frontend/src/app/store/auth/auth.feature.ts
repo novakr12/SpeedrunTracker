@@ -48,8 +48,12 @@ export const authFeature = createFeature({
     })),
     on(AuthActions.logout, () => initialState),
   ),
-  extraSelectors: ({ selectToken }) => ({
+  extraSelectors: ({ selectToken, selectUser }) => ({
     selectIsAuthenticated: createSelector(selectToken, (token) => !!token),
+    selectIsAdmin: createSelector(
+      selectUser,
+      (user) => user?.role === 'admin',
+    ),
   }),
 });
 
@@ -61,4 +65,5 @@ export const {
   selectLoading: selectAuthLoading,
   selectError: selectAuthError,
   selectIsAuthenticated,
+  selectIsAdmin,
 } = authFeature;

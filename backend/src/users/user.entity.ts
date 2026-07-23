@@ -7,6 +7,8 @@ import {
 } from 'typeorm';
 import { Run } from '../runs/run.entity';
 
+export type UserRole = 'user' | 'admin';
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -20,6 +22,9 @@ export class User {
 
   @Column({ select: false })
   password: string;
+
+  @Column({ default: 'user' })
+  role: UserRole;
 
   @OneToMany(() => Run, (run) => run.user)
   runs: Run[];

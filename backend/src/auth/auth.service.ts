@@ -27,10 +27,19 @@ export class AuthService {
   }
 
   private buildToken(user: User) {
-    const payload = { sub: user.id, username: user.username };
+    const payload = {
+      sub: user.id,
+      username: user.username,
+      role: user.role,
+    };
     return {
       accessToken: this.jwtService.sign(payload),
-      user: { id: user.id, username: user.username, email: user.email },
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
     };
   }
 }
