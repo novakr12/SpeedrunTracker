@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
@@ -45,6 +46,22 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/runs/run-form.component').then(
         (m) => m.RunFormComponent,
+      ),
+  },
+  {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/profile/profile.component').then(
+        (m) => m.ProfileComponent,
+      ),
+  },
+  {
+    path: 'moderation',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./features/moderation/moderation.component').then(
+        (m) => m.ModerationComponent,
       ),
   },
   { path: '**', redirectTo: 'dashboard' },

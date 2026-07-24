@@ -21,7 +21,9 @@ import {
         <a routerLink="/games" routerLinkActive="active">Games</a>
         <a routerLink="/runs" routerLinkActive="active">Runs</a>
         <span class="spacer"></span>
-        <span class="user">{{ (user$ | async)?.username }}</span>
+        <a routerLink="/profile" routerLinkActive="active" class="user">{{
+          (user$ | async)?.username
+        }}</a>
         <button type="button" (click)="logout()">Logout</button>
       } @else {
         <span class="spacer"></span>

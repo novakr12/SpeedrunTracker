@@ -1,0 +1,107 @@
+.page {
+  padding: 1.5rem;
+}
+
+.profile-head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.profile-head h1 {
+  margin: 0;
+}
+
+.email {
+  margin: 0.2rem 0;
+  font-size: 0.85rem;
+  color: #aab2c0;
+}
+
+.role {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.role.admin {
+  background: rgba(108, 92, 231, 0.15);
+  color: var(--accent);
+  border-color: rgba(108, 92, 231, 0.45);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: #171a22;
+  border: 1px solid #262b36;
+  border-radius: 12px;
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.label {
+  font-size: 0.78rem;
+  color: #aab2c0;
+}
+
+h2 {
+  margin: 2rem 0 0.75rem;
+  font-size: 1.05rem;
+}
+
+.facts {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-width: 520px;
+}
+
+.facts li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 0.2rem;
+  border-bottom: 1px solid #262b36;
+}
+
+.facts strong {
+  color: #e6e6e6;
+  text-align: right;
+}
+
+.muted {
+  color: #6b7280;
+}
