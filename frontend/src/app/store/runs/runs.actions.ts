@@ -10,5 +10,12 @@ export const RunsActions = createActionGroup({
     Submit: props<{ dto: CreateRunDto }>(),
     'Submit Success': props<{ run: Run }>(),
     'Submit Failure': props<{ error: string }>(),
+    Review: props<{
+      id: string;
+      status: 'accepted' | 'rejected';
+      comment?: string;
+    }>(),
+    'Review Success': props<{ run: Run }>(),
+    'Review Failure': props<{ error: string }>(),
   },
 });

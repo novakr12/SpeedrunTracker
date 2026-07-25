@@ -32,7 +32,7 @@ import {
             <th>Category</th>
             <th>Runner</th>
             <th>Time</th>
-            <th>Verified</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>
@@ -43,7 +43,9 @@ import {
               <td>{{ run.category?.name || '—' }}</td>
               <td>{{ run.user?.username || '—' }}</td>
               <td class="time">{{ run.timeMs | msToTime }}</td>
-              <td>{{ run.verified ? '✅' : '⏳' }}</td>
+              <td [title]="run.reviewComment || ''">
+                {{ statusIcon(run.status) }}
+              </td>
             </tr>
           } @empty {
             <tr>
@@ -64,5 +66,15 @@ export class RunsListComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.dispatch(RunsActions.load());
+  }
+
+  statusIcon(status: string): string {
+    if (status === 'accepted') {
+      return '✅';
+    }
+    if (status === 'rejected') {
+      return '❌';
+    }
+    return '⏳';
   }
 }

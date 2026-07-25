@@ -10,6 +10,8 @@ import { User } from '../users/user.entity';
 import { Game } from '../games/game.entity';
 import { Category } from '../categories/category.entity';
 
+export type RunStatus = 'pending' | 'accepted' | 'rejected';
+
 @Entity('runs')
 export class Run {
   @PrimaryGeneratedColumn('uuid')
@@ -44,8 +46,14 @@ export class Run {
   @Column({ nullable: true })
   videoUrl: string;
 
-  @Column({ default: false })
-  verified: boolean;
+  @Column({ default: 'pending' })
+  status: RunStatus;
+
+  @Column({ type: 'text', nullable: true })
+  reviewComment: string | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  reviewedAt: Date | null;
 
   @Column({ type: 'timestamp', nullable: true })
   playedAt: Date;

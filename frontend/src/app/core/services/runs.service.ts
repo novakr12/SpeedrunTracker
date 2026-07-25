@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CreateRunDto, Run } from '../models/run.model';
+import { CreateRunDto, ReviewRunDto, Run } from '../models/run.model';
 
 @Injectable({ providedIn: 'root' })
 export class RunsService {
@@ -14,5 +14,9 @@ export class RunsService {
 
   create(dto: CreateRunDto): Observable<Run> {
     return this.http.post<Run>(this.base, dto);
+  }
+
+  review(id: string, dto: ReviewRunDto): Observable<Run> {
+    return this.http.patch<Run>(`${this.base}/${id}/review`, dto);
   }
 }

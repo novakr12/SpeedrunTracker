@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { Run } from './run.entity';
 import { CreateRunDto } from './dto/create-run.dto';
 import { UpdateRunDto } from './dto/update-run.dto';
+import { ReviewRunDto } from './dto/review-run.dto';
 import { UsersService } from '../users/users.service';
 import { GamesService } from '../games/games.service';
 import { CategoriesService } from '../categories/categories.service';
@@ -67,6 +68,14 @@ export class RunsService {
     if (!run) {
       throw new NotFoundException(`Run ${id} not found`);
     }
+    return this.runsRepository.save(run);
+  }
+
+  async review(id: string, dto: ReviewRunDto): Promise<Run> {
+    const run = await this.findOne(id);
+    run.status = dto.status;
+    run.reviewComment = dto.comment ?? null;
+    run.reviewedAt = new Date();
     return this.runsRepository.save(run);
   }
 

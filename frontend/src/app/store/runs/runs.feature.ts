@@ -1,4 +1,4 @@
-import { createFeature, createReducer, on } from '@ngrx/store';
+import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { Run } from '../../core/models/run.model';
 import { RunsActions } from './runs.actions';
@@ -31,12 +31,22 @@ export const runsFeature = createFeature({
       error,
     })),
     on(RunsActions.submitFailure, (state, { error }) => ({ ...state, error })),
+    on(RunsActions.reviewSuccess, (state, { run }) =>
+      runsAdapter.upsertOne(run, state),
+    ),
+    on(RunsActions.reviewFailure, (state, { error }) => ({ ...state, error })),
   ),
   extraSelectors: ({ selectRunsState }) => {
     const { selectAll, selectTotal } = runsAdapter.getSelectors(
       selectRunsState,
     );
-    return { selectAllRuns: selectAll, selectRunsTotal: selectTotal };
+    return {
+      selectAllRuns: selectAll,
+      selectRunsTotal: selectTotal,
+      selectPendingRuns: createSelector(selectAll, (runs) =>
+        runs.filter((run) => run.status === 'pending'),
+      ),
+    };
   },
 });
 
@@ -45,4 +55,5 @@ export const {
   selectError: selectRunsError,
   selectAllRuns,
   selectRunsTotal,
+  selectPendingRuns,
 } = runsFeature;

@@ -44,4 +44,18 @@ export class RunsEffects {
       map(() => RunsActions.load()),
     ),
   );
+
+  review$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(RunsActions.review),
+      concatMap(({ id, status, comment }) =>
+        this.runsService.review(id, { status, comment }).pipe(
+          map((run) => RunsActions.reviewSuccess({ run })),
+          catchError((err) =>
+            of(RunsActions.reviewFailure({ error: toMessage(err) })),
+          ),
+        ),
+      ),
+    ),
+  );
 }

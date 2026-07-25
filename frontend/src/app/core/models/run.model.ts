@@ -1,6 +1,8 @@
 import { Category, Game } from './game.model';
 import { AuthUser } from './auth.model';
 
+export type RunStatus = 'pending' | 'accepted' | 'rejected';
+
 export interface Run {
   id: string;
   userId: string;
@@ -8,7 +10,9 @@ export interface Run {
   categoryId: string;
   timeMs: number;
   videoUrl?: string;
-  verified: boolean;
+  status: RunStatus;
+  reviewComment?: string | null;
+  reviewedAt?: string | null;
   playedAt?: string;
   createdAt?: string;
   user?: AuthUser;
@@ -22,4 +26,9 @@ export interface CreateRunDto {
   timeMs: number;
   videoUrl?: string;
   playedAt?: string;
+}
+
+export interface ReviewRunDto {
+  status: 'accepted' | 'rejected';
+  comment?: string;
 }

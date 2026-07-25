@@ -19,7 +19,7 @@ export function computeDashboardStats(
   games: Game[],
   runs: Run[],
 ): DashboardStats {
-  const verifiedRuns = runs.filter((run) => run.verified).length;
+  const verifiedRuns = runs.filter((run) => run.status === 'accepted').length;
 
   const totalTimeMs = runs.reduce((sum, run) => sum + run.timeMs, 0);
 

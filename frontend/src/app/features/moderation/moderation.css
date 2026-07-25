@@ -1,0 +1,95 @@
+.page {
+  padding: 1.5rem;
+}
+
+h1 {
+  margin: 0 0 1.5rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  max-width: 720px;
+}
+
+.run {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  background: #171a22;
+  border: 1px solid #262b36;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+}
+
+.info h3 {
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
+}
+
+.meta {
+  margin: 0 0 0.4rem;
+  font-size: 0.85rem;
+  color: #aab2c0;
+}
+
+.time {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: #e6e6e6;
+}
+
+.video {
+  color: var(--accent);
+  font-size: 0.85rem;
+}
+
+.no-video {
+  color: #6b7280;
+  font-size: 0.8rem;
+}
+
+.review {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 220px;
+}
+
+.review input {
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #2c3340;
+  background: #0f1117;
+  color: #e6e6e6;
+  font-size: 0.85rem;
+}
+
+.buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.buttons button {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fff;
+}
+
+.accept {
+  background: #22c55e;
+}
+
+.reject {
+  background: #ef4444;
+}
+
+.muted {
+  color: #6b7280;
+}
