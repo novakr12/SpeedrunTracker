@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { map, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { Category } from '../../core/models/game.model';
@@ -71,7 +71,6 @@ export class RunFormComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly gamesService = inject(GamesService);
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   private readonly destroy$ = new Subject<void>();
 
   readonly games$ = this.store.select(selectAllGames);
@@ -125,7 +124,6 @@ export class RunFormComponent implements OnInit, OnDestroy {
         },
       }),
     );
-    this.router.navigate(['/runs']);
   }
 
   ngOnDestroy(): void {

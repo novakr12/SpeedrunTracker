@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, concatMap, map, of, switchMap } from 'rxjs';
+import { Router } from '@angular/router';
+import { catchError, concatMap, map, of, switchMap, tap } from 'rxjs';
 import { RunsActions } from './runs.actions';
 import { RunsService } from '../../core/services/runs.service';
 import { toMessage } from '../../core/utils/http-error';
@@ -9,6 +10,7 @@ import { toMessage } from '../../core/utils/http-error';
 export class RunsEffects {
   private readonly actions$ = inject(Actions);
   private readonly runsService = inject(RunsService);
+  private readonly router = inject(Router);
 
   load$ = createEffect(() =>
     this.actions$.pipe(
@@ -43,6 +45,15 @@ export class RunsEffects {
       ofType(RunsActions.submitSuccess),
       map(() => RunsActions.load()),
     ),
+  );
+
+  navigateOnSubmit$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(RunsActions.submitSuccess),
+        tap(() => this.router.navigate(['/runs'])),
+      ),
+    { dispatch: false },
   );
 
   review$ = createEffect(() =>

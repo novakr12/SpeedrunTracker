@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -9,6 +10,7 @@ import * as bcrypt from 'bcryptjs';
 import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { BanUserDto } from './dto/ban-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -82,6 +84,44 @@ export class UsersService {
       throw new NotFoundException(`User ${id} not found`);
     }
     return this.usersRepository.save(user);
+  }
+
+  isBanned(user: User): boolean {
+    if (!user.banned) {
+      return false;
+    }
+    if (!user.bannedUntil) {
+      return true;
+    }
+    return user.bannedUntil.getTime() > Date.now();
+  }
+
+  async ban(id: string, dto: BanUserDto): Promise<User> {
+    const user = await this.findOne(id);
+    if (user.role === 'admin') {
+      throw new ForbiddenException('Admins cannot be banned');
+    }
+    user.banned = true;
+    user.bannedAt = new Date();
+    user.banReason = dto.reason ?? null;
+    user.bannedUntil = dto.durationDays
+      ? new Date(Date.now() + dto.durationDays * 24 * 60 * 60 * 1000)
+      : null;
+    return this.usersRepository.save(user);
+  }
+
+  async unban(id: string): Promise<User> {
+    const user = await this.findOne(id);
+    user.banned = false;
+    user.bannedUntil = null;
+    user.banReason = null;
+    user.bannedAt = null;
+    return this.usersRepository.save(user);
+  }
+
+  async findBanned(): Promise<User[]> {
+    const users = await this.usersRepository.find({ where: { banned: true } });
+    return users.filter((user) => this.isBanned(user));
   }
 
   async remove(id: string): Promise<void> {

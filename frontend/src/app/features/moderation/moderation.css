@@ -90,6 +90,63 @@ h1 {
   background: #ef4444;
 }
 
+.ban-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.ban-row select {
+  flex: 0 0 auto;
+  min-width: 0;
+  padding: 0.45rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #2c3340;
+  background: #0f1117;
+  color: #e6e6e6;
+  font-size: 0.8rem;
+}
+
+.ban-row button.ban {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0.45rem;
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  border-radius: 8px;
+  background: transparent;
+  color: #ff8080;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ban-row button.ban:hover {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+}
+
+h2 {
+  margin: 2.25rem 0 0.85rem;
+  font-size: 1.05rem;
+}
+
+.banned-row .reason {
+  margin: 0.2rem 0 0;
+  font-size: 0.82rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.perm {
+  color: #ff8080;
+  font-weight: 600;
+}
+
+.unban {
+  background: #334155;
+  padding: 0.5rem 1rem;
+}
+
 .muted {
   color: #6b7280;
 }

@@ -14,6 +14,8 @@ import { runsFeature } from './store/runs/runs.feature';
 import { RunsEffects } from './store/runs/runs.effects';
 import { categoriesFeature } from './store/categories/categories.feature';
 import { CategoriesEffects } from './store/categories/categories.effects';
+import { usersFeature } from './store/users/users.feature';
+import { UsersEffects } from './store/users/users.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -24,7 +26,14 @@ export const appConfig: ApplicationConfig = {
     provideState(gamesFeature),
     provideState(runsFeature),
     provideState(categoriesFeature),
-    provideEffects(AuthEffects, GamesEffects, RunsEffects, CategoriesEffects),
+    provideState(usersFeature),
+    provideEffects(
+      AuthEffects,
+      GamesEffects,
+      RunsEffects,
+      CategoriesEffects,
+      UsersEffects,
+    ),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
   ],
 };

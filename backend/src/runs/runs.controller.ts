@@ -16,6 +16,7 @@ import { UpdateRunDto } from './dto/update-run.dto';
 import { ReviewRunDto } from './dto/review-run.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { BanGuard } from '../auth/guards/ban.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser, AuthUser } from '../auth/decorators/current-user.decorator';
 
@@ -23,7 +24,7 @@ import { CurrentUser, AuthUser } from '../auth/decorators/current-user.decorator
 export class RunsController {
   constructor(private readonly runsService: RunsService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, BanGuard)
   @Post()
   create(@CurrentUser() user: AuthUser, @Body() dto: CreateRunDto) {
     return this.runsService.create(user.userId, dto);

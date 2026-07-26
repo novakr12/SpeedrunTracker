@@ -26,6 +26,18 @@ export class User {
   @Column({ default: 'user' })
   role: UserRole;
 
+  @Column({ default: false })
+  banned: boolean;
+
+  @Column({ type: 'timestamp', nullable: true })
+  bannedUntil: Date | null;
+
+  @Column({ type: 'text', nullable: true })
+  banReason: string | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  bannedAt: Date | null;
+
   @OneToMany(() => Run, (run) => run.user)
   runs: Run[];
 
