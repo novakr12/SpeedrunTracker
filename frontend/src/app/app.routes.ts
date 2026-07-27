@@ -33,6 +33,14 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'games/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/games/game-leaderboard.component').then(
+        (m) => m.GameLeaderboardComponent,
+      ),
+  },
+  {
     path: 'runs',
     canActivate: [authGuard],
     loadComponent: () =>

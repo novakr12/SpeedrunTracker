@@ -52,6 +52,9 @@ export interface GameUpdate {
         }
 
         <div class="actions">
+          <button type="button" (click)="viewLeaderboard.emit(game)">
+            Leaderboard
+          </button>
           <button type="button" (click)="select.emit(game)">+ Add run</button>
           @if (canManage) {
             <button type="button" (click)="startEdit()">Edit</button>
@@ -122,6 +125,7 @@ export class GameCardComponent {
   @Input() categories: Category[] = [];
   @Input() canManage = false;
   @Output() select = new EventEmitter<Game>();
+  @Output() viewLeaderboard = new EventEmitter<Game>();
   @Output() remove = new EventEmitter<string>();
   @Output() update = new EventEmitter<GameUpdate>();
   @Output() categoryUpdate = new EventEmitter<{ id: string; name: string }>();

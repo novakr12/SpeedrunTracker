@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CreateRunDto, ReviewRunDto, Run } from '../models/run.model';
+import { GameLeaderboard } from '../models/leaderboard.model';
 
 @Injectable({ providedIn: 'root' })
 export class RunsService {
@@ -10,6 +11,10 @@ export class RunsService {
 
   getAll(): Observable<Run[]> {
     return this.http.get<Run[]>(this.base);
+  }
+
+  getGameLeaderboard(gameId: string): Observable<GameLeaderboard> {
+    return this.http.get<GameLeaderboard>(`${this.base}/leaderboard/${gameId}`);
   }
 
   create(dto: CreateRunDto): Observable<Run> {

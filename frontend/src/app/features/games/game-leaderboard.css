@@ -1,0 +1,87 @@
+.page {
+  padding: 1.5rem;
+}
+
+header {
+  margin-bottom: 1.5rem;
+}
+
+header h1 {
+  margin: 0.25rem 0 0;
+}
+
+.back {
+  font-size: 0.8rem;
+  color: #aab2c0;
+}
+
+.back:hover {
+  color: var(--accent);
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #262b36;
+}
+
+.tab {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid #262b36;
+  border-radius: 999px;
+  background: transparent;
+  color: #aab2c0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: #fff;
+}
+
+.tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid #262b36;
+}
+
+th {
+  color: #aab2c0;
+  font-weight: 600;
+}
+
+.rank {
+  width: 3rem;
+  font-variant-numeric: tabular-nums;
+  color: #aab2c0;
+}
+
+.time {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.muted {
+  color: #6b7280;
+}
+
+.error {
+  color: #f87171;
+}

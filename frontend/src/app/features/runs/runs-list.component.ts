@@ -16,9 +16,14 @@ import {
   template: `
     <section class="page">
       <header>
-        <h1>Leaderboard</h1>
+        <h1>All runs</h1>
         <a class="btn" routerLink="/runs/new">+ Submit run</a>
       </header>
+
+      <p class="muted hint">
+        Every submitted run, including ones still awaiting review. For ranked
+        leaderboards, open a game from the Games page.
+      </p>
 
       @if (loading$ | async) {
         <p class="muted">Loading…</p>
@@ -27,7 +32,6 @@ import {
       <table>
         <thead>
           <tr>
-            <th>#</th>
             <th>Game</th>
             <th>Category</th>
             <th>Runner</th>
@@ -36,20 +40,19 @@ import {
           </tr>
         </thead>
         <tbody>
-          @for (run of runs$ | async; track run.id; let i = $index) {
+          @for (run of runs$ | async; track run.id) {
             <tr>
-              <td>{{ i + 1 }}</td>
               <td>{{ run.game?.title || '—' }}</td>
               <td>{{ run.category?.name || '—' }}</td>
               <td>{{ run.user?.username || '—' }}</td>
               <td class="time">{{ run.timeMs | msToTime }}</td>
               <td [title]="run.reviewComment || ''">
-                {{ statusIcon(run.status) }}
+                {{ statusLabel(run.status) }}
               </td>
             </tr>
           } @empty {
             <tr>
-              <td colspan="6" class="muted">No runs yet.</td>
+              <td colspan="5" class="muted">No runs yet.</td>
             </tr>
           }
         </tbody>
@@ -68,13 +71,13 @@ export class RunsListComponent implements OnInit {
     this.store.dispatch(RunsActions.load());
   }
 
-  statusIcon(status: string): string {
+  statusLabel(status: string): string {
     if (status === 'accepted') {
-      return '✅';
+      return 'Accepted';
     }
     if (status === 'rejected') {
-      return '❌';
+      return 'Rejected';
     }
-    return '⏳';
+    return 'Pending';
   }
 }

@@ -96,6 +96,7 @@ import { selectIsAdmin } from '../../store/auth/auth.feature';
             [categories]="categoriesByGame[game.id] || []"
             [canManage]="(isAdmin$ | async) ?? false"
             (select)="onSelect($event)"
+            (viewLeaderboard)="onViewLeaderboard($event)"
             (remove)="onRemove($event)"
             (update)="onUpdate($event)"
             (categoryUpdate)="onCategoryUpdate($event)"
@@ -155,6 +156,10 @@ export class GamesListComponent implements OnInit, OnDestroy {
 
   onSelect(game: Game): void {
     this.router.navigate(['/runs/new'], { queryParams: { gameId: game.id } });
+  }
+
+  onViewLeaderboard(game: Game): void {
+    this.router.navigate(['/games', game.id]);
   }
 
   onRemove(id: string): void {

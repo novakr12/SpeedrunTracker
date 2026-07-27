@@ -9,6 +9,10 @@ import { Run } from './run.entity';
 import { CreateRunDto } from './dto/create-run.dto';
 import { UpdateRunDto } from './dto/update-run.dto';
 import { ReviewRunDto } from './dto/review-run.dto';
+import {
+  GameLeaderboard,
+  LeaderboardEntry,
+} from './dto/leaderboard.types';
 import { UsersService } from '../users/users.service';
 import { GamesService } from '../games/games.service';
 import { CategoriesService } from '../categories/categories.service';
@@ -38,6 +42,48 @@ export class RunsService {
       relations: { user: true, game: true, category: true },
       order: { timeMs: 'ASC' },
     });
+  }
+
+  async leaderboardForGame(gameId: string): Promise<GameLeaderboard> {
+    const game = await this.gamesService.findOne(gameId);
+    const categories = await this.categoriesService.findByGame(gameId);
+    const runs = await this.runsRepository.find({
+      where: { gameId, status: 'accepted' },
+      relations: { user: true },
+      order: { timeMs: 'ASC' },
+    });
+
+    // Runs arrive fastest-first, so the first one seen for a runner in a
+    // category is that runner's personal best; later attempts are dropped.
+    const bestByCategory = new Map<string, Run[]>();
+    const seenRunners = new Map<string, Set<string>>();
+    for (const run of runs) {
+      let runners = seenRunners.get(run.categoryId);
+      if (!runners) {
+        runners = new Set<string>();
+        seenRunners.set(run.categoryId, runners);
+      }
+      if (runners.has(run.userId)) {
+        continue;
+      }
+      runners.add(run.userId);
+      const best = bestByCategory.get(run.categoryId);
+      if (best) {
+        best.push(run);
+      } else {
+        bestByCategory.set(run.categoryId, [run]);
+      }
+    }
+
+    return {
+      gameId: game.id,
+      gameTitle: game.title,
+      categories: categories.map((category) => ({
+        categoryId: category.id,
+        categoryName: category.name,
+        entries: this.toRankedEntries(bestByCategory.get(category.id) ?? []),
+      })),
+    };
   }
 
   async findOne(id: string): Promise<Run> {
@@ -84,6 +130,27 @@ export class RunsService {
     if (!result.affected) {
       throw new NotFoundException(`Run ${id} not found`);
     }
+  }
+
+  // Standard competition ranking: equal times share a rank and the next
+  // distinct time skips the gap (1, 2, 2, 4).
+  private toRankedEntries(runs: Run[]): LeaderboardEntry[] {
+    let previousTimeMs: number | null = null;
+    let previousRank = 0;
+    return runs.map((run, index) => {
+      const rank = run.timeMs === previousTimeMs ? previousRank : index + 1;
+      previousTimeMs = run.timeMs;
+      previousRank = rank;
+      return {
+        rank,
+        runId: run.id,
+        userId: run.userId,
+        username: run.user?.username ?? 'Unknown',
+        timeMs: run.timeMs,
+        videoUrl: run.videoUrl ?? undefined,
+        playedAt: run.playedAt ?? null,
+      };
+    });
   }
 
   private async validateReferences(

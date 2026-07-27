@@ -35,6 +35,11 @@ export class RunsController {
     return this.runsService.findAll();
   }
 
+  @Get('leaderboard/:gameId')
+  leaderboard(@Param('gameId', ParseUUIDPipe) gameId: string) {
+    return this.runsService.leaderboardForGame(gameId);
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.runsService.findOne(id);

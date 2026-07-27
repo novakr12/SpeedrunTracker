@@ -27,7 +27,7 @@ import { selectBannedUsers } from '../../store/users/users.feature';
               </p>
               @if (run.videoUrl) {
                 <a class="video" [href]="run.videoUrl" target="_blank" rel="noopener">
-                  ▶ Watch video
+                  Watch video
                 </a>
               } @else {
                 <span class="no-video">No video provided</span>
@@ -67,7 +67,7 @@ import { selectBannedUsers } from '../../store/users/users.feature';
             </div>
           </article>
         } @empty {
-          <p class="muted">🎉 No runs waiting for verification.</p>
+          <p class="muted">No runs waiting for verification.</p>
         }
       </div>
 

@@ -59,7 +59,7 @@ import { selectAllRuns } from '../../store/runs/runs.feature';
         <ul class="facts">
           @if (stats.mostRunGame) {
             <li>
-              <span>🎮 Most-run game</span>
+              <span>Most-run game</span>
               <strong
                 >{{ stats.mostRunGame.game }} ({{
                   stats.mostRunGame.count
@@ -69,7 +69,7 @@ import { selectAllRuns } from '../../store/runs/runs.feature';
           }
           @if (stats.fastestRun) {
             <li>
-              <span>⚡ Personal best</span>
+              <span>Personal best</span>
               <strong>
                 {{ stats.fastestRun.timeMs | msToTime }} —
                 {{ stats.fastestRun.game }} / {{ stats.fastestRun.category }}

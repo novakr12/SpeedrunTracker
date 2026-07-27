@@ -24,6 +24,10 @@ export class CategoriesService {
     return this.categoriesRepository.find();
   }
 
+  findByGame(gameId: string): Promise<Category[]> {
+    return this.categoriesRepository.find({ where: { gameId } });
+  }
+
   async findOne(id: string): Promise<Category> {
     const category = await this.categoriesRepository.findOne({
       where: { id },

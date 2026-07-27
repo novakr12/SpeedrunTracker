@@ -16,6 +16,8 @@ import { categoriesFeature } from './store/categories/categories.feature';
 import { CategoriesEffects } from './store/categories/categories.effects';
 import { usersFeature } from './store/users/users.feature';
 import { UsersEffects } from './store/users/users.effects';
+import { leaderboardFeature } from './store/leaderboard/leaderboard.feature';
+import { LeaderboardEffects } from './store/leaderboard/leaderboard.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -27,12 +29,14 @@ export const appConfig: ApplicationConfig = {
     provideState(runsFeature),
     provideState(categoriesFeature),
     provideState(usersFeature),
+    provideState(leaderboardFeature),
     provideEffects(
       AuthEffects,
       GamesEffects,
       RunsEffects,
       CategoriesEffects,
       UsersEffects,
+      LeaderboardEffects,
     ),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
   ],

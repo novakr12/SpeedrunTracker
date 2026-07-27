@@ -48,3 +48,8 @@ th {
 .muted {
   color: #6b7280;
 }
+
+.hint {
+  margin: -0.5rem 0 1rem;
+  font-size: 0.85rem;
+}

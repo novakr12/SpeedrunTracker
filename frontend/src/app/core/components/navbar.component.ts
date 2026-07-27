@@ -15,7 +15,7 @@ import {
   imports: [RouterLink, RouterLinkActive, AsyncPipe],
   template: `
     <nav>
-      <a class="brand" routerLink="/">🏁 SpeedrunTracker</a>
+      <a class="brand" routerLink="/">SpeedrunTracker</a>
 
       @if (isAuthenticated$ | async) {
         <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
