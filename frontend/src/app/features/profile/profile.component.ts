@@ -78,6 +78,10 @@ import { selectAllRuns } from '../../store/runs/runs.feature';
           }
           @if (stats.totalRuns === 0) {
             <li class="muted">No runs yet — submit one from the Games page!</li>
+          } @else if (stats.verifiedRuns === 0) {
+            <li class="muted">
+              Nothing verified yet — these appear once a run is approved.
+            </li>
           }
         </ul>
       }

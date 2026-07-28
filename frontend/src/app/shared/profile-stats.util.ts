@@ -12,15 +12,25 @@ export interface ProfileStats {
 }
 
 export function computeProfileStats(runs: Run[]): ProfileStats {
-  const totalRuns = runs.length;
-  const totalTimeMs = runs.reduce((sum, run) => sum + run.timeMs, 0);
-  const averageTimeMs = totalRuns ? Math.round(totalTimeMs / totalRuns) : 0;
-  const verifiedRuns = runs.filter((run) => run.status === 'accepted').length;
-  const distinctGames = new Set(runs.map((run) => run.gameId)).size;
-  const distinctCategories = new Set(runs.map((run) => run.categoryId)).size;
+  // A rejected run has been ruled invalid, so it counts nowhere. Times and
+  // records go one step further and use verified runs only, so an unreviewed
+  // submission can never surface as a personal best.
+  const submitted = runs.filter((run) => run.status !== 'rejected');
+  const accepted = runs.filter((run) => run.status === 'accepted');
+
+  const totalRuns = submitted.length;
+  const verifiedRuns = accepted.length;
+
+  const totalTimeMs = accepted.reduce((sum, run) => sum + run.timeMs, 0);
+  const averageTimeMs = verifiedRuns
+    ? Math.round(totalTimeMs / verifiedRuns)
+    : 0;
+
+  const distinctGames = new Set(accepted.map((run) => run.gameId)).size;
+  const distinctCategories = new Set(accepted.map((run) => run.categoryId)).size;
 
   const counts = new Map<string, number>();
-  runs.forEach((run) => {
+  accepted.forEach((run) => {
     const title = run.game?.title ?? 'Unknown';
     counts.set(title, (counts.get(title) ?? 0) + 1);
   });
@@ -29,7 +39,7 @@ export function computeProfileStats(runs: Run[]): ProfileStats {
       .map(([game, count]) => ({ game, count }))
       .sort((a, b) => b.count - a.count)[0] ?? null;
 
-  const fastest = runs.reduce<Run | null>(
+  const fastest = accepted.reduce<Run | null>(
     (best, run) => (!best || run.timeMs < best.timeMs ? run : best),
     null,
   );
