@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Run } from '../models/run.model';
 
 export interface ServerSummary {
   games: number;
@@ -18,8 +19,11 @@ export class StatsService {
     }
 
     const games = (await gamesResponse.json()) as unknown[];
-    const runs = (await runsResponse.json()) as unknown[];
+    const runs = (await runsResponse.json()) as Run[];
 
-    return { games: games.length, runs: runs.length };
+    return {
+      games: games.length,
+      runs: runs.filter((run) => run.status !== 'rejected').length,
+    };
   }
 }

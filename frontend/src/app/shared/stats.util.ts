@@ -19,17 +19,20 @@ export function computeDashboardStats(
   games: Game[],
   runs: Run[],
 ): DashboardStats {
-  const verifiedRuns = runs.filter((run) => run.status === 'accepted').length;
+  // Same rule as computeProfileStats: a rejected run counts nowhere, and times
+  // and rankings are built from verified runs only.
+  const submitted = runs.filter((run) => run.status !== 'rejected');
+  const accepted = runs.filter((run) => run.status === 'accepted');
 
-  const totalTimeMs = runs.reduce((sum, run) => sum + run.timeMs, 0);
+  const verifiedRuns = accepted.length;
 
-  const times = runs.map((run) => run.timeMs);
-  const averageTimeMs = times.length
-    ? Math.round(totalTimeMs / times.length)
+  const totalTimeMs = accepted.reduce((sum, run) => sum + run.timeMs, 0);
+  const averageTimeMs = verifiedRuns
+    ? Math.round(totalTimeMs / verifiedRuns)
     : 0;
 
   const counts = new Map<string, number>();
-  runs.forEach((run) => {
+  accepted.forEach((run) => {
     const title = run.game?.title ?? 'Unknown';
     counts.set(title, (counts.get(title) ?? 0) + 1);
   });
@@ -39,7 +42,7 @@ export function computeDashboardStats(
 
   return {
     totalGames: games.length,
-    totalRuns: runs.length,
+    totalRuns: submitted.length,
     verifiedRuns,
     totalTimeMs,
     averageTimeMs,
