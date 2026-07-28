@@ -46,6 +46,13 @@ export const authFeature = createFeature({
       token,
       user,
     })),
+    // Deliberately does not touch `loading`: this runs on every navigation and
+    // must stay invisible. A failed refresh is ignored entirely, so a flaky
+    // background check can never log the user out.
+    on(AuthActions.refreshProfileSuccess, (state, { user }) => ({
+      ...state,
+      user,
+    })),
     on(AuthActions.logout, () => initialState),
   ),
   extraSelectors: ({ selectToken, selectUser }) => ({

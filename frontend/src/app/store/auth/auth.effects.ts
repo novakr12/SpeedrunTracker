@@ -1,8 +1,19 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Router } from '@angular/router';
-import { catchError, exhaustMap, map, of, tap } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import {
+  catchError,
+  exhaustMap,
+  filter,
+  map,
+  of,
+  switchMap,
+  tap,
+  withLatestFrom,
+} from 'rxjs';
 import { AuthActions } from './auth.actions';
+import { selectIsAuthenticated } from './auth.feature';
 import { AuthService } from '../../core/services/auth.service';
 import { toMessage } from '../../core/utils/http-error';
 
@@ -11,6 +22,7 @@ export class AuthEffects {
   private readonly actions$ = inject(Actions);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly store = inject(Store);
 
   login$ = createEffect(() =>
     this.actions$.pipe(
@@ -49,6 +61,40 @@ export class AuthEffects {
           localStorage.setItem('user', JSON.stringify(response.user));
           this.router.navigate(['/dashboard']);
         }),
+      ),
+    { dispatch: false },
+  );
+
+  // Ban state lives on the server and can change while a session is open, so
+  // the cached user from login is re-checked on every navigation.
+  refreshOnNavigation$ = createEffect(() =>
+    this.router.events.pipe(
+      filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+      withLatestFrom(this.store.select(selectIsAuthenticated)),
+      filter(([, isAuthenticated]) => isAuthenticated),
+      map(() => AuthActions.refreshProfile()),
+    ),
+  );
+
+  refreshProfile$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.refreshProfile),
+      switchMap(() =>
+        this.authService.me().pipe(
+          map((user) => AuthActions.refreshProfileSuccess({ user })),
+          catchError((err) =>
+            of(AuthActions.refreshProfileFailure({ error: toMessage(err) })),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  persistProfile$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.refreshProfileSuccess),
+        tap(({ user }) => localStorage.setItem('user', JSON.stringify(user))),
       ),
     { dispatch: false },
   );

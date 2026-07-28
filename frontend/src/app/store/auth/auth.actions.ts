@@ -16,6 +16,9 @@ export const AuthActions = createActionGroup({
     'Register Success': props<{ response: AuthResponse }>(),
     'Register Failure': props<{ error: string }>(),
     'Restore Session': props<{ token: string; user: AuthUser }>(),
+    'Refresh Profile': emptyProps(),
+    'Refresh Profile Success': props<{ user: AuthUser }>(),
+    'Refresh Profile Failure': props<{ error: string }>(),
     Logout: emptyProps(),
   },
 });

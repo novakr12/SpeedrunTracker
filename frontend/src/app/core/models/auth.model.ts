@@ -5,6 +5,10 @@ export interface AuthUser {
   username: string;
   email: string;
   role: UserRole;
+  banned: boolean;
+  banReason?: string | null;
+  bannedUntil?: string | null;
+  bannedAt?: string | null;
 }
 
 export interface AuthResponse {
