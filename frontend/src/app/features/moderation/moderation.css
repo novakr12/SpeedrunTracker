@@ -3,7 +3,53 @@
 }
 
 h1 {
-  margin: 0 0 1.5rem;
+  margin: 0 0 1rem;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #262b36;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid #262b36;
+  border-radius: 999px;
+  background: transparent;
+  color: #aab2c0;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: #fff;
+}
+
+.tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.tab-count {
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.25);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.tab.active .tab-count {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .list {
@@ -149,4 +195,101 @@ h2 {
 
 .muted {
   color: #6b7280;
+}
+
+.appeal-row .info {
+  flex: 1 1 340px;
+  min-width: 0;
+}
+
+.ban-facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.2rem 0.75rem;
+  margin: 0.6rem 0 0.75rem;
+  padding: 0.6rem 0.75rem;
+  background: #0f1117;
+  border: 1px solid #262b36;
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+
+.ban-facts dt {
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.ban-facts dd {
+  margin: 0;
+  color: #e6e6e6;
+  overflow-wrap: anywhere;
+}
+
+.ban-facts dd.state-active {
+  color: #ff8080;
+  font-weight: 600;
+}
+
+.ban-facts dd.state-stale {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.appeal-row .label {
+  margin: 0 0 0.15rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.appeal-row .reason {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+  color: #e6e6e6;
+  overflow-wrap: anywhere;
+}
+
+.appeal-row .hint {
+  margin: 0.15rem 0 0;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.appeal-row .review {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.appeal-row .review input {
+  width: 100%;
+  text-align: center;
+}
+
+.appeal-row .review .buttons {
+  width: 100%;
+}
+
+.run-flag {
+  margin-left: 0.15rem;
+  font-size: 0.72rem;
+  color: #ff8080;
+}
+
+.run-video {
+  margin-left: 0.4rem;
+  color: var(--accent);
+}
+
+.appeal-row.resolved {
+  opacity: 0.75;
+}
+
+.appeal-verdict.accepted {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.appeal-verdict.rejected {
+  color: #ff8080;
+  font-weight: 600;
 }

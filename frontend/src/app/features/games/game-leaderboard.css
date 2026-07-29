@@ -34,6 +34,7 @@ header h1 {
   border-radius: 999px;
   background: transparent;
   color: #aab2c0;
+  font: inherit;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
