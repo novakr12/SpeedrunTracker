@@ -18,6 +18,8 @@ import { usersFeature } from './store/users/users.feature';
 import { UsersEffects } from './store/users/users.effects';
 import { leaderboardFeature } from './store/leaderboard/leaderboard.feature';
 import { LeaderboardEffects } from './store/leaderboard/leaderboard.effects';
+import { appealsFeature } from './store/appeals/appeals.feature';
+import { AppealsEffects } from './store/appeals/appeals.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,6 +32,7 @@ export const appConfig: ApplicationConfig = {
     provideState(categoriesFeature),
     provideState(usersFeature),
     provideState(leaderboardFeature),
+    provideState(appealsFeature),
     provideEffects(
       AuthEffects,
       GamesEffects,
@@ -37,6 +40,7 @@ export const appConfig: ApplicationConfig = {
       CategoriesEffects,
       UsersEffects,
       LeaderboardEffects,
+      AppealsEffects,
     ),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
   ],

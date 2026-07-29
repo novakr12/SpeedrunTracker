@@ -1,4 +1,14 @@
+import { AppealStatus } from './appeal.model';
+
 export type UserRole = 'user' | 'admin';
+
+export interface AuthUserAppeal {
+  status: AppealStatus;
+  message: string;
+  adminComment: string | null;
+  createdAt: string;
+  resolvedAt: string | null;
+}
 
 export interface AuthUser {
   id: string;
@@ -9,6 +19,8 @@ export interface AuthUser {
   banReason?: string | null;
   bannedUntil?: string | null;
   bannedAt?: string | null;
+  canAppeal?: boolean;
+  appeal?: AuthUserAppeal | null;
 }
 
 export interface AuthResponse {
