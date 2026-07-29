@@ -1,4 +1,12 @@
-import { IsInt, IsOptional, IsString, Max, MaxLength, Min } from 'class-validator';
+import {
+  IsInt,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Max,
+  MaxLength,
+  Min,
+} from 'class-validator';
 
 export class BanUserDto {
   @IsOptional()
@@ -11,4 +19,8 @@ export class BanUserDto {
   @IsString()
   @MaxLength(500)
   reason?: string;
+
+  @IsOptional()
+  @IsUUID()
+  runId?: string;
 }

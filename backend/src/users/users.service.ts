@@ -104,6 +104,7 @@ export class UsersService {
     user.banned = true;
     user.bannedAt = new Date();
     user.banReason = dto.reason ?? null;
+    user.banRunId = dto.runId ?? null;
     user.bannedUntil = dto.durationDays
       ? new Date(Date.now() + dto.durationDays * 24 * 60 * 60 * 1000)
       : null;
@@ -116,6 +117,8 @@ export class UsersService {
     user.bannedUntil = null;
     user.banReason = null;
     user.bannedAt = null;
+    // Cleared too, otherwise a later ban would inherit this one's run.
+    user.banRunId = null;
     return this.usersRepository.save(user);
   }
 

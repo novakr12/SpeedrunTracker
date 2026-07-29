@@ -7,7 +7,12 @@ export const UsersActions = createActionGroup({
     'Load Banned': emptyProps(),
     'Load Banned Success': props<{ users: ManagedUser[] }>(),
     'Load Banned Failure': props<{ error: string }>(),
-    Ban: props<{ id: string; durationDays?: number; reason?: string }>(),
+    Ban: props<{
+      id: string;
+      durationDays?: number;
+      reason?: string;
+      runId?: string;
+    }>(),
     'Ban Success': props<{ user: ManagedUser }>(),
     'Ban Failure': props<{ error: string }>(),
     Unban: props<{ id: string }>(),

@@ -9,9 +9,11 @@ export interface ManagedUser {
   bannedUntil: string | null;
   banReason: string | null;
   bannedAt: string | null;
+  banRunId: string | null;
 }
 
 export interface BanUserDto {
   durationDays?: number;
   reason?: string;
+  runId?: string;
 }

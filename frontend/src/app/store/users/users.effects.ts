@@ -27,8 +27,8 @@ export class UsersEffects {
   ban$ = createEffect(() =>
     this.actions$.pipe(
       ofType(UsersActions.ban),
-      concatMap(({ id, durationDays, reason }) =>
-        this.usersService.ban(id, { durationDays, reason }).pipe(
+      concatMap(({ id, durationDays, reason, runId }) =>
+        this.usersService.ban(id, { durationDays, reason, runId }).pipe(
           map((user) => UsersActions.banSuccess({ user })),
           catchError((err) =>
             of(UsersActions.banFailure({ error: toMessage(err) })),
