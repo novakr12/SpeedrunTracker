@@ -12,9 +12,6 @@ export interface ProfileStats {
 }
 
 export function computeProfileStats(runs: Run[]): ProfileStats {
-  // A rejected run has been ruled invalid, so it counts nowhere. Times and
-  // records go one step further and use verified runs only, so an unreviewed
-  // submission can never surface as a personal best.
   const submitted = runs.filter((run) => run.status !== 'rejected');
   const accepted = runs.filter((run) => run.status === 'accepted');
 

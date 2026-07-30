@@ -91,9 +91,6 @@ export class UsersService {
   ): Promise<User> {
     const { currentPassword, ...changes } = dto;
 
-    // Changing your own password requires proving you know the old one, so a
-    // stolen token cannot be used to lock the real owner out of the account.
-    // Admins are exempt: they reset passwords for people who cannot log in.
     if (changes.password && !actorIsAdmin) {
       if (!currentPassword) {
         throw new BadRequestException(
@@ -151,7 +148,6 @@ export class UsersService {
     user.bannedUntil = null;
     user.banReason = null;
     user.bannedAt = null;
-    // Cleared too, otherwise a later ban would inherit this one's run.
     user.banRunId = null;
     return this.usersRepository.save(user);
   }

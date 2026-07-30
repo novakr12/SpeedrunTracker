@@ -65,8 +65,6 @@ export class AuthEffects {
     { dispatch: false },
   );
 
-  // Ban state lives on the server and can change while a session is open, so
-  // the cached user from login is re-checked on every navigation.
   refreshOnNavigation$ = createEffect(() =>
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd),

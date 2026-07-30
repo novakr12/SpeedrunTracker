@@ -18,7 +18,6 @@ export const leaderboardFeature = createFeature({
   name: 'leaderboard',
   reducer: createReducer(
     initialState,
-    // Clear the previous game's board so switching games never shows stale rows.
     on(LeaderboardActions.load, (state) => ({
       ...state,
       leaderboard: null,

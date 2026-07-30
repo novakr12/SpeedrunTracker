@@ -55,8 +55,6 @@ export class RunsService {
       order: { timeMs: 'ASC' },
     });
 
-    // Runs arrive fastest-first, so the first one seen for a runner in a
-    // category is that runner's personal best; later attempts are dropped.
     const bestByCategory = new Map<string, Run[]>();
     const seenRunners = new Map<string, Set<string>>();
     for (const run of runs) {
@@ -103,11 +101,6 @@ export class RunsService {
     const existing = await this.findOne(id);
     this.assertOwnedBy(existing, actor);
 
-    // Ownership alone is not enough here. A verified run is already ranked on
-    // the leaderboard, so letting its owner edit timeMs afterwards would allow
-    // a legitimate run to be approved and then quietly rewritten into a fake
-    // record. Edits are therefore limited to runs still awaiting review;
-    // admins can still correct anything.
     if (actor.role !== 'admin' && existing.status !== 'pending') {
       throw new ForbiddenException(
         'Only runs still awaiting verification can be edited',
@@ -152,8 +145,6 @@ export class RunsService {
     }
   }
 
-  // Standard competition ranking: equal times share a rank and the next
-  // distinct time skips the gap (1, 2, 2, 4).
   private toRankedEntries(runs: Run[]): LeaderboardEntry[] {
     let previousTimeMs: number | null = null;
     let previousRank = 0;

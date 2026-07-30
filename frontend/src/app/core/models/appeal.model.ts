@@ -11,8 +11,6 @@ export interface BanAppeal {
   adminComment: string | null;
   resolvedAt: string | null;
   createdAt: string;
-  // The API loads the full user relation, so ban details ride along with the
-  // appeal and the moderator can see what is actually being appealed.
   user?: ManagedUser;
 }
 

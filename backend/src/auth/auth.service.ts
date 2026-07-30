@@ -45,9 +45,6 @@ export class AuthService {
     };
   }
 
-  // isBanned() treats an expired temporary ban as inactive, so the badge clears
-  // itself once the ban runs out. The ban details are blanked in that case too,
-  // so a served-out reason is not still exposed to the client.
   private async toProfile(user: User): Promise<AuthProfile> {
     const banned = this.usersService.isBanned(user);
     const appeal = banned
@@ -63,9 +60,6 @@ export class AuthService {
       banReason: banned ? user.banReason : null,
       bannedUntil: banned ? user.bannedUntil : null,
       bannedAt: banned ? user.bannedAt : null,
-      // One appeal per ban: offered only while the ban is active and unused.
-      // An unban clears bannedAt, so findForCurrentBan() returns null and the
-      // button disappears rather than reappearing.
       canAppeal: banned && !appeal,
       appeal: appeal
         ? {

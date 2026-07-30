@@ -22,10 +22,6 @@ export class BanAppeal {
   @Column()
   userId: string;
 
-  // Snapshot of the user's bannedAt when the appeal was filed. UsersService.ban()
-  // stamps a fresh bannedAt on every ban, so this column is what enforces "one
-  // appeal per ban": a later ban carries a different timestamp and therefore
-  // opens up a new appeal, while the same ban cannot be appealed twice.
   @Column({ type: 'timestamp' })
   banIssuedAt: Date;
 

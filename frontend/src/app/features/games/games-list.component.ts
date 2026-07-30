@@ -15,6 +15,7 @@ import { PLATFORMS } from '../../shared/platforms';
 import { GamesActions } from '../../store/games/games.actions';
 import {
   selectFilteredGames,
+  selectGamesError,
   selectGamesLoading,
 } from '../../store/games/games.feature';
 import { CategoriesActions } from '../../store/categories/categories.actions';
@@ -52,6 +53,19 @@ import { selectIsAdmin } from '../../store/auth/auth.feature';
             formControlName="tags"
           />
         </div>
+        <div class="row">
+          <input
+            type="text"
+            class="cover-url"
+            placeholder="Cover image URL (optional)"
+            formControlName="coverImage"
+          />
+        </div>
+        @if (addForm.controls.coverImage.invalid) {
+          <p class="field-error">
+            Must start with http:// or https:// — leave empty for no cover.
+          </p>
+        }
         <div class="platforms">
           @for (platform of platforms; track platform) {
             <label class="pf">
@@ -83,6 +97,10 @@ import { selectIsAdmin } from '../../store/auth/auth.feature';
           Add category
         </button>
       </form>
+      }
+
+      @if (error$ | async; as error) {
+        <p class="form-error">{{ error }}</p>
       }
 
       @if (loading$ | async) {
@@ -118,6 +136,7 @@ export class GamesListComponent implements OnInit, OnDestroy {
 
   readonly games$ = this.store.select(selectFilteredGames);
   readonly loading$ = this.store.select(selectGamesLoading);
+  readonly error$ = this.store.select(selectGamesError);
   readonly isAdmin$ = this.store.select(selectIsAdmin);
 
   readonly search = new FormControl('', { nonNullable: true });
@@ -129,6 +148,7 @@ export class GamesListComponent implements OnInit, OnDestroy {
     title: ['', [Validators.required]],
     releaseYear: this.fb.control<number | null>(null),
     tags: [''],
+    coverImage: ['', [Validators.pattern(/^https?:\/\/\S+$/i)]],
   });
 
   readonly categoryForm = this.fb.nonNullable.group({
@@ -199,6 +219,7 @@ export class GamesListComponent implements OnInit, OnDestroy {
       .split(',')
       .map((tag) => tag.trim())
       .filter((tag) => tag.length > 0);
+    const coverImage = value.coverImage.trim();
     this.store.dispatch(
       GamesActions.create({
         dto: {
@@ -206,6 +227,7 @@ export class GamesListComponent implements OnInit, OnDestroy {
           releaseYear: value.releaseYear ?? undefined,
           platforms: Array.from(this.selectedPlatforms),
           tags,
+          coverImage: coverImage || undefined,
         },
       }),
     );

@@ -4,7 +4,9 @@ import {
   IsOptional,
   IsString,
   IsNotEmpty,
+  IsUrl,
   Max,
+  MaxLength,
   Min,
 } from 'class-validator';
 
@@ -30,6 +32,7 @@ export class CreateGameDto {
   releaseYear?: number;
 
   @IsOptional()
-  @IsString()
+  @IsUrl({ protocols: ['http', 'https'], require_protocol: true })
+  @MaxLength(2048)
   coverImage?: string;
 }

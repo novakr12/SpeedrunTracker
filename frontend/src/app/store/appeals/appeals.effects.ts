@@ -11,8 +11,6 @@ export class AppealsEffects {
   private readonly actions$ = inject(Actions);
   private readonly appealsService = inject(AppealsService);
 
-  // exhaustMap: a double-click must not fire two appeals, since only one is
-  // allowed per ban and the second would come back as a 409.
   submit$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AppealsActions.submit),
@@ -27,8 +25,6 @@ export class AppealsEffects {
     ),
   );
 
-  // The appeal's state lives on the auth profile, so refresh it to swap the
-  // button for the submitted status without a page reload.
   refreshProfileOnSubmit$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AppealsActions.submitSuccess),

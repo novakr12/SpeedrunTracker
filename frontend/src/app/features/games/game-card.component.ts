@@ -15,8 +15,12 @@ export interface GameUpdate {
   template: `
     <article class="card">
       <div class="cover">
-        @if (game.coverImage) {
-          <img [src]="game.coverImage" [alt]="game.title" />
+        @if (game.coverImage && !coverFailed) {
+          <img
+            [src]="game.coverImage"
+            [alt]="game.title"
+            (error)="coverFailed = true"
+          />
         } @else {
           <span>{{ game.title.charAt(0) }}</span>
         }
@@ -132,6 +136,7 @@ export class GameCardComponent {
   @Output() categoryDelete = new EventEmitter<string>();
 
   readonly allPlatforms = PLATFORMS;
+  coverFailed = false;
   editing = false;
   editPlatforms = new Set<string>();
   editTags = '';

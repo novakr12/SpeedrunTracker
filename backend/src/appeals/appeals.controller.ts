@@ -23,9 +23,6 @@ import {
 export class AppealsController {
   constructor(private readonly appealsService: AppealsService) {}
 
-  // Deliberately NOT behind BanGuard. Being banned is the precondition for
-  // appealing, so guarding this route would lock people out of the one action
-  // it exists to provide.
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@CurrentUser() user: AuthUser, @Body() dto: CreateAppealDto) {

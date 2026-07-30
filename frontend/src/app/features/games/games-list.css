@@ -71,6 +71,27 @@ header h1 {
   color: #e6e6e6;
 }
 
+.cover-url {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+.field-error {
+  margin: 0.35rem 0 0;
+  font-size: 0.8rem;
+  color: #ff6b6b;
+}
+
+.form-error {
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.85rem;
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  border-radius: 8px;
+  background: rgba(255, 107, 107, 0.1);
+  font-size: 0.85rem;
+  color: #ff6b6b;
+}
+
 .add button,
 .add-game button {
   padding: 0.5rem 1rem;

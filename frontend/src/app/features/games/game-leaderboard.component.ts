@@ -109,9 +109,6 @@ export class GameLeaderboardComponent implements OnInit, OnDestroy {
   readonly loading$ = this.store.select(selectLeaderboardLoading);
   readonly error$ = this.store.select(selectLeaderboardError);
 
-  // Resolving the active category by lookup-with-fallback means a stale
-  // selection from a previously viewed game simply lands on the new game's
-  // first category, with no imperative resetting.
   readonly view$ = combineLatest([
     this.store.select(selectLeaderboard),
     this.selectedCategoryId$,
@@ -129,8 +126,6 @@ export class GameLeaderboardComponent implements OnInit, OnDestroy {
   );
 
   ngOnInit(): void {
-    // paramMap rather than snapshot: the router reuses this component when
-    // navigating between two games, so the snapshot would go stale.
     this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       const gameId = params.get('id');
       if (gameId) {

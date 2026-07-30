@@ -38,9 +38,6 @@ export class User {
   @Column({ type: 'timestamp', nullable: true })
   bannedAt: Date | null;
 
-  // The run that triggered this ban, when it was issued from the review queue.
-  // Plain column rather than a relation: the ban must survive the run being
-  // deleted, and a dangling id is better than losing the ban record with it.
   @Column({ type: 'uuid', nullable: true })
   banRunId: string | null;
 

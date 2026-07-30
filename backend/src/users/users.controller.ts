@@ -27,8 +27,6 @@ import {
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  // Admin-only: public sign-up goes through POST /auth/register, which is the
-  // only path that should mint accounts for anonymous callers.
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @Post()
@@ -36,7 +34,6 @@ export class UsersController {
     return this.usersService.create(dto);
   }
 
-  // Returns every user including email addresses, so admin only.
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @Get()
@@ -97,9 +94,6 @@ export class UsersController {
     return this.usersService.remove(id);
   }
 
-  // UpdateUserDto includes `password`, so without this check any caller could
-  // reset another account's password and take it over. Admins keep full access
-  // because moderation depends on it.
   private assertSelfOrAdmin(current: AuthUser, targetId: string): void {
     if (current.role !== 'admin' && current.userId !== targetId) {
       throw new ForbiddenException('You can only modify your own account');

@@ -50,8 +50,6 @@ button:hover {
   display: inline-flex;
 }
 
-/* Mirrors the .role pill in profile.css. `font: inherit` first, because a
-   <button> does not inherit the body font the way that <span> does. */
 button.banned-badge {
   padding: 0.15rem 0.55rem;
   border: 1px solid rgba(248, 113, 113, 0.35);

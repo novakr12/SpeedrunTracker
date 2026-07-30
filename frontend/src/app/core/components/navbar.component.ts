@@ -163,8 +163,6 @@ export class NavbarComponent {
   }
 
   toggleBanDetails(event: MouseEvent): void {
-    // Without this the document listener below would close the popover in the
-    // same click that opened it.
     event.stopPropagation();
     this.showBanDetails = !this.showBanDetails;
   }
@@ -192,8 +190,6 @@ export class NavbarComponent {
 
   @HostListener('document:keydown.escape')
   onEscape(): void {
-    // Escape backs out of the form first, so a stray keypress cannot discard a
-    // half-written appeal along with the whole popover.
     if (this.appealFormOpen) {
       this.cancelAppeal();
       return;

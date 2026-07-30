@@ -23,8 +23,6 @@ export class AppealsService {
   async create(userId: string, dto: CreateAppealDto): Promise<BanAppeal> {
     const user = await this.usersService.findOne(userId);
 
-    // isBanned() rather than user.banned, so an expired temporary ban cannot be
-    // appealed after the fact.
     if (!this.usersService.isBanned(user) || !user.bannedAt) {
       throw new ForbiddenException('You are not currently banned');
     }
@@ -41,9 +39,6 @@ export class AppealsService {
     return this.appealsRepository.save(appeal);
   }
 
-  // The appeal belonging to this user's *current* ban, if one was filed.
-  // Returns null once the ban is lifted, which is what makes the appeal button
-  // disappear after an unban.
   findForCurrentBan(user: User): Promise<BanAppeal | null> {
     if (!user.bannedAt) {
       return Promise.resolve(null);

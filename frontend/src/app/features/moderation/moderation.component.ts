@@ -304,9 +304,6 @@ export class ModerationComponent implements OnInit {
   readonly banned$ = this.store.select(selectBannedUsers);
   readonly resolvedAppeals$ = this.store.select(selectResolvedAppeals);
 
-  // Open appeals joined with the context a moderator needs to decide: whether
-  // the ban is still in force, the run that caused it, and how many runs this
-  // user has had rejected.
   readonly openAppeals$ = combineLatest([
     this.store.select(selectOpenAppeals),
     this.store.select(selectAllRuns),
@@ -321,8 +318,6 @@ export class ModerationComponent implements OnInit {
             (run) => run.userId === appeal.userId && run.status === 'rejected',
           ).length,
           banRunId,
-          // Null with an id present means the run was deleted — worth showing
-          // differently from a ban that never had a run attached.
           banRun: banRunId
             ? (runs.find((run) => run.id === banRunId) ?? null)
             : null,
@@ -331,7 +326,6 @@ export class ModerationComponent implements OnInit {
     ),
   );
 
-  // Counts sit on the tabs so pending work is visible without opening each one.
   readonly counts$ = combineLatest([
     this.pending$,
     this.store.select(selectOpenAppeals),
@@ -345,9 +339,6 @@ export class ModerationComponent implements OnInit {
   );
 
   comments: Record<string, string> = {};
-  // Explicitly optional: an un-touched row has no entry, so the `?? '7'` default
-  // in the template is real. Typed as plain string, TS reports that fallback as
-  // dead code (NG8102) and invites someone to delete it.
   banDuration: Record<string, string | undefined> = {};
   appealComments: Record<string, string> = {};
 

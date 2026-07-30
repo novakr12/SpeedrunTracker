@@ -30,6 +30,12 @@ export const gamesFeature = createFeature({
       loading: false,
       error,
     })),
+    on(
+      GamesActions.create,
+      GamesActions.update,
+      GamesActions.delete,
+      (state) => ({ ...state, error: null }),
+    ),
     on(GamesActions.createSuccess, (state, { game }) =>
       gamesAdapter.addOne(game, state),
     ),

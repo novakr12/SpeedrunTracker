@@ -19,8 +19,6 @@ export function computeDashboardStats(
   games: Game[],
   runs: Run[],
 ): DashboardStats {
-  // Same rule as computeProfileStats: a rejected run counts nowhere, and times
-  // and rankings are built from verified runs only.
   const submitted = runs.filter((run) => run.status !== 'rejected');
   const accepted = runs.filter((run) => run.status === 'accepted');
 
