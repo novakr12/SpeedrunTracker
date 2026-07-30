@@ -83,7 +83,7 @@ export class UsersController {
     @Body() dto: UpdateUserDto,
   ) {
     this.assertSelfOrAdmin(current, id);
-    return this.usersService.update(id, dto);
+    return this.usersService.update(id, dto, current.role === 'admin');
   }
 
   @UseGuards(JwtAuthGuard)

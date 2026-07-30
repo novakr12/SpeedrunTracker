@@ -1,8 +1,10 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -74,10 +76,42 @@ export class UsersService {
       .getOne();
   }
 
-  async update(id: string, dto: UpdateUserDto): Promise<User> {
-    const patch: Partial<User> = { ...dto };
-    if (dto.password) {
-      patch.password = await bcrypt.hash(dto.password, 10);
+  private findByIdWithPassword(id: string): Promise<User | null> {
+    return this.usersRepository
+      .createQueryBuilder('user')
+      .addSelect('user.password')
+      .where('user.id = :id', { id })
+      .getOne();
+  }
+
+  async update(
+    id: string,
+    dto: UpdateUserDto,
+    actorIsAdmin = false,
+  ): Promise<User> {
+    const { currentPassword, ...changes } = dto;
+
+    // Changing your own password requires proving you know the old one, so a
+    // stolen token cannot be used to lock the real owner out of the account.
+    // Admins are exempt: they reset passwords for people who cannot log in.
+    if (changes.password && !actorIsAdmin) {
+      if (!currentPassword) {
+        throw new BadRequestException(
+          'currentPassword is required to change your password',
+        );
+      }
+      const existing = await this.findByIdWithPassword(id);
+      if (
+        !existing ||
+        !(await bcrypt.compare(currentPassword, existing.password))
+      ) {
+        throw new UnauthorizedException('Current password is incorrect');
+      }
+    }
+
+    const patch: Partial<User> = { ...changes };
+    if (changes.password) {
+      patch.password = await bcrypt.hash(changes.password, 10);
     }
     const user = await this.usersRepository.preload({ id, ...patch });
     if (!user) {
