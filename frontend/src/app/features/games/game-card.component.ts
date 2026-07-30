@@ -16,7 +16,9 @@ export interface GameUpdate {
     <article class="card">
       <div class="cover">
         @if (game.coverImage && !coverFailed) {
+          <img class="cover-blur" [src]="game.coverImage" alt="" aria-hidden="true" />
           <img
+            class="cover-main"
             [src]="game.coverImage"
             [alt]="game.title"
             (error)="coverFailed = true"
