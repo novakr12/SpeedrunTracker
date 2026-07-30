@@ -21,7 +21,7 @@
 }
 
 .cover {
-  height: 90px;
+  aspect-ratio: 16 / 9;
   border-radius: 8px;
   background: #0f1117;
   display: flex;
