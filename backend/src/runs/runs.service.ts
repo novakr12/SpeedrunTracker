@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -13,6 +14,7 @@ import {
   GameLeaderboard,
   LeaderboardEntry,
 } from './dto/leaderboard.types';
+import { AuthUser } from '../auth/decorators/current-user.decorator';
 import { UsersService } from '../users/users.service';
 import { GamesService } from '../games/games.service';
 import { CategoriesService } from '../categories/categories.service';
@@ -97,9 +99,22 @@ export class RunsService {
     return run;
   }
 
-  async update(id: string, dto: UpdateRunDto): Promise<Run> {
+  async update(id: string, dto: UpdateRunDto, actor: AuthUser): Promise<Run> {
+    const existing = await this.findOne(id);
+    this.assertOwnedBy(existing, actor);
+
+    // Ownership alone is not enough here. A verified run is already ranked on
+    // the leaderboard, so letting its owner edit timeMs afterwards would allow
+    // a legitimate run to be approved and then quietly rewritten into a fake
+    // record. Edits are therefore limited to runs still awaiting review;
+    // admins can still correct anything.
+    if (actor.role !== 'admin' && existing.status !== 'pending') {
+      throw new ForbiddenException(
+        'Only runs still awaiting verification can be edited',
+      );
+    }
+
     if (dto.gameId || dto.categoryId) {
-      const existing = await this.findOne(id);
       await this.validateReferences(
         existing.userId,
         dto.gameId ?? existing.gameId,
@@ -125,10 +140,15 @@ export class RunsService {
     return this.runsRepository.save(run);
   }
 
-  async remove(id: string): Promise<void> {
-    const result = await this.runsRepository.delete(id);
-    if (!result.affected) {
-      throw new NotFoundException(`Run ${id} not found`);
+  async remove(id: string, actor: AuthUser): Promise<void> {
+    const run = await this.findOne(id);
+    this.assertOwnedBy(run, actor);
+    await this.runsRepository.delete(id);
+  }
+
+  private assertOwnedBy(run: Run, actor: AuthUser): void {
+    if (actor.role !== 'admin' && run.userId !== actor.userId) {
+      throw new ForbiddenException('You can only modify your own runs');
     }
   }
 

@@ -48,10 +48,11 @@ export class RunsController {
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(
+    @CurrentUser() user: AuthUser,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateRunDto,
   ) {
-    return this.runsService.update(id, dto);
+    return this.runsService.update(id, dto, user);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -67,7 +68,10 @@ export class RunsController {
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.runsService.remove(id);
+  remove(
+    @CurrentUser() user: AuthUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.runsService.remove(id, user);
   }
 }
