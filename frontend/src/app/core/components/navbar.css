@@ -11,6 +11,17 @@ nav {
   font-weight: 700;
   font-size: 1.05rem;
   color: #e6e6e6;
+  text-decoration: none;
+}
+
+.brand-accent,
+.brand-rest {
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+}
+
+.brand-accent {
+  color: #a78bfa;
 }
 
 nav a {

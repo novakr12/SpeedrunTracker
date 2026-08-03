@@ -1,19 +1,19 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Category, Game, UpdateGameDto } from '../../core/models/game.model';
-import { PLATFORMS } from '../../shared/platforms';
-
-export interface GameUpdate {
-  id: string;
-  changes: UpdateGameDto;
-}
+import { Category, Game } from '../../core/models/game.model';
 
 @Component({
   selector: 'app-game-card',
   standalone: true,
-  imports: [FormsModule],
   template: `
-    <article class="card">
+    <article
+      class="card"
+      role="link"
+      tabindex="0"
+      [attr.aria-label]="'Open ' + game.title"
+      (click)="open.emit(game)"
+      (keydown.enter)="open.emit(game)"
+      (keydown.space)="onSpace($event)"
+    >
       <div class="cover">
         @if (game.coverImage && !coverFailed) {
           <img class="cover-blur" [src]="game.coverImage" alt="" aria-hidden="true" />
@@ -32,94 +32,35 @@ export interface GameUpdate {
         <p class="meta">{{ game.releaseYear }}</p>
       }
 
-      @if (!editing) {
-        @if (game.platforms?.length) {
-          <div class="chips">
-            @for (platform of game.platforms; track platform) {
-              <span class="chip platform">{{ platform }}</span>
-            }
-          </div>
-        }
-        @if (game.tags?.length) {
-          <div class="chips">
-            @for (tag of game.tags; track tag) {
-              <span class="chip tag">#{{ tag }}</span>
-            }
-          </div>
-        }
-        @if (categories.length) {
-          <div class="chips">
-            @for (category of categories; track category.id) {
-              <span class="chip">{{ category.name }}</span>
-            }
-          </div>
-        } @else {
-          <p class="empty">No categories</p>
-        }
-
-        <div class="actions">
-          <button type="button" (click)="viewLeaderboard.emit(game)">
-            Leaderboard
-          </button>
-          <button type="button" (click)="select.emit(game)">+ Add run</button>
-          @if (canManage) {
-            <button type="button" (click)="startEdit()">Edit</button>
-            <button
-              type="button"
-              class="danger"
-              (click)="remove.emit(game.id)"
-            >
-              Delete
-            </button>
+      @if (game.platforms?.length) {
+        <div class="chips">
+          @for (platform of game.platforms; track platform) {
+            <span class="chip platform">{{ platform }}</span>
+          }
+        </div>
+      }
+      @if (game.tags?.length) {
+        <div class="chips">
+          @for (tag of game.tags; track tag) {
+            <span class="chip tag">#{{ tag }}</span>
+          }
+        </div>
+      }
+      @if (categories.length) {
+        <div class="chips">
+          @for (category of categories; track category.id) {
+            <span class="chip">{{ category.name }}</span>
           }
         </div>
       } @else {
-        <div class="platforms">
-          @for (platform of allPlatforms; track platform) {
-            <label class="pf">
-              <input
-                type="checkbox"
-                [checked]="editPlatforms.has(platform)"
-                (change)="toggle(platform, $any($event.target).checked)"
-              />
-              {{ platform }}
-            </label>
-          }
-        </div>
-        <input
-          type="text"
-          class="tags-input"
-          placeholder="Tags (comma separated)"
-          [(ngModel)]="editTags"
-        />
+        <p class="empty">No categories</p>
+      }
 
-        @if (categories.length) {
-          <div class="cat-editor">
-            @for (category of categories; track category.id) {
-              <div class="cat-row">
-                <input type="text" [(ngModel)]="categoryNames[category.id]" />
-                <button
-                  type="button"
-                  (click)="saveCategory(category.id)"
-                  [disabled]="!categoryNames[category.id]"
-                >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  class="danger"
-                  (click)="categoryDelete.emit(category.id)"
-                >
-                  ×
-                </button>
-              </div>
-            }
-          </div>
-        }
-
+      @if (canManage) {
         <div class="actions">
-          <button type="button" (click)="save()">Save game</button>
-          <button type="button" (click)="editing = false">Done</button>
+          <button type="button" class="danger" (click)="onDelete($event)">
+            Delete
+          </button>
         </div>
       }
     </article>
@@ -130,54 +71,18 @@ export class GameCardComponent {
   @Input({ required: true }) game!: Game;
   @Input() categories: Category[] = [];
   @Input() canManage = false;
-  @Output() select = new EventEmitter<Game>();
-  @Output() viewLeaderboard = new EventEmitter<Game>();
+  @Output() open = new EventEmitter<Game>();
   @Output() remove = new EventEmitter<string>();
-  @Output() update = new EventEmitter<GameUpdate>();
-  @Output() categoryUpdate = new EventEmitter<{ id: string; name: string }>();
-  @Output() categoryDelete = new EventEmitter<string>();
 
-  readonly allPlatforms = PLATFORMS;
   coverFailed = false;
-  editing = false;
-  editPlatforms = new Set<string>();
-  editTags = '';
-  categoryNames: Record<string, string> = {};
 
-  startEdit(): void {
-    this.editPlatforms = new Set(this.game.platforms ?? []);
-    this.editTags = (this.game.tags ?? []).join(', ');
-    this.categoryNames = {};
-    this.categories.forEach((category) => {
-      this.categoryNames[category.id] = category.name;
-    });
-    this.editing = true;
+  onDelete(event: Event): void {
+    event.stopPropagation();
+    this.remove.emit(this.game.id);
   }
 
-  saveCategory(id: string): void {
-    const name = this.categoryNames[id]?.trim();
-    if (name) {
-      this.categoryUpdate.emit({ id, name });
-    }
-  }
-
-  toggle(platform: string, checked: boolean): void {
-    if (checked) {
-      this.editPlatforms.add(platform);
-    } else {
-      this.editPlatforms.delete(platform);
-    }
-  }
-
-  save(): void {
-    const tags = this.editTags
-      .split(',')
-      .map((tag) => tag.trim())
-      .filter((tag) => tag.length > 0);
-    this.update.emit({
-      id: this.game.id,
-      changes: { platforms: Array.from(this.editPlatforms), tags },
-    });
-    this.editing = false;
+  onSpace(event: Event): void {
+    event.preventDefault();
+    this.open.emit(this.game);
   }
 }

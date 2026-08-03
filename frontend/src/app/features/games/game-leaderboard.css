@@ -19,6 +19,162 @@ header h1 {
   color: var(--accent);
 }
 
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
+.btn {
+  padding: 0.45rem 0.95rem;
+  border: 1px solid #2c3340;
+  border-radius: 8px;
+  background: transparent;
+  color: #e6e6e6;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn:hover {
+  border-color: var(--accent);
+}
+
+.btn.primary {
+  border-color: transparent;
+  background: var(--accent);
+  color: #fff;
+}
+
+.game-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 1.25rem;
+}
+
+.game-meta .chip {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(108, 92, 231, 0.15);
+  color: var(--accent);
+  border: 1px solid rgba(108, 92, 231, 0.4);
+}
+
+.game-meta .chip.year {
+  background: rgba(148, 163, 184, 0.1);
+  color: #aab2c0;
+  border-color: rgba(148, 163, 184, 0.3);
+}
+
+.game-meta .chip.platform {
+  background: rgba(56, 189, 248, 0.12);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.game-meta .chip.tag {
+  background: rgba(148, 163, 184, 0.12);
+  color: #94a3b8;
+  border-color: rgba(148, 163, 184, 0.35);
+}
+
+.edit-panel {
+  margin-bottom: 1.5rem;
+  padding: 1.1rem 1.25rem;
+  background: #171a22;
+  border: 1px solid #262b36;
+  border-radius: 12px;
+  max-width: 560px;
+}
+
+.edit-panel h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.edit-panel .label {
+  margin: 0.9rem 0 0.35rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.platforms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.pf {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  color: #aab2c0;
+  cursor: pointer;
+}
+
+.tags-input,
+.cat-row input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #2c3340;
+  background: #0f1117;
+  color: #e6e6e6;
+  font: inherit;
+  font-size: 0.85rem;
+}
+
+.cat-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.cat-row {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  min-width: 0;
+}
+
+.cat-row button {
+  flex: 0 0 auto;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #2c3340;
+  border-radius: 8px;
+  background: transparent;
+  color: #e6e6e6;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.cat-row button:hover {
+  border-color: var(--accent);
+}
+
+.cat-row button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cat-row button.danger {
+  color: #ff6b6b;
+  border-color: rgba(255, 107, 107, 0.4);
+}
+
+.edit-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.1rem;
+}
+
 .tabs {
   display: flex;
   flex-wrap: wrap;

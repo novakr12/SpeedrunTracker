@@ -23,7 +23,10 @@ const MIN_APPEAL_LENGTH = 20;
   imports: [RouterLink, RouterLinkActive, AsyncPipe, DatePipe, FormsModule],
   template: `
     <nav>
-      <a class="brand" routerLink="/">SpeedrunTracker</a>
+      <a class="brand" routerLink="/"
+        ><span class="brand-accent">Speedrun</span
+        ><span class="brand-rest">Tracker</span></a
+      >
 
       @if (isAuthenticated$ | async) {
         <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>

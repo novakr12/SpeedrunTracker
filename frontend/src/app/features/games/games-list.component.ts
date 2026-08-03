@@ -9,7 +9,7 @@ import {
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
-import { GameCardComponent, GameUpdate } from './game-card.component';
+import { GameCardComponent } from './game-card.component';
 import { Category, Game } from '../../core/models/game.model';
 import { PLATFORMS } from '../../shared/platforms';
 import { GamesActions } from '../../store/games/games.actions';
@@ -113,12 +113,8 @@ import { selectIsAdmin } from '../../store/auth/auth.feature';
             [game]="game"
             [categories]="categoriesByGame[game.id] || []"
             [canManage]="(isAdmin$ | async) ?? false"
-            (select)="onSelect($event)"
-            (viewLeaderboard)="onViewLeaderboard($event)"
+            (open)="onOpen($event)"
             (remove)="onRemove($event)"
-            (update)="onUpdate($event)"
-            (categoryUpdate)="onCategoryUpdate($event)"
-            (categoryDelete)="onCategoryDelete($event)"
           />
         } @empty {
           <p class="muted">No games found.</p>
@@ -174,32 +170,12 @@ export class GamesListComponent implements OnInit, OnDestroy {
       .subscribe((grouped) => (this.categoriesByGame = grouped));
   }
 
-  onSelect(game: Game): void {
-    this.router.navigate(['/runs/new'], { queryParams: { gameId: game.id } });
-  }
-
-  onViewLeaderboard(game: Game): void {
+  onOpen(game: Game): void {
     this.router.navigate(['/games', game.id]);
   }
 
   onRemove(id: string): void {
     this.store.dispatch(GamesActions.delete({ id }));
-  }
-
-  onUpdate(event: GameUpdate): void {
-    this.store.dispatch(
-      GamesActions.update({ id: event.id, changes: event.changes }),
-    );
-  }
-
-  onCategoryUpdate(event: { id: string; name: string }): void {
-    this.store.dispatch(
-      CategoriesActions.update({ id: event.id, changes: { name: event.name } }),
-    );
-  }
-
-  onCategoryDelete(id: string): void {
-    this.store.dispatch(CategoriesActions.delete({ id }));
   }
 
   togglePlatform(platform: string, checked: boolean): void {
