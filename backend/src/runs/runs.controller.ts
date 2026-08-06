@@ -59,10 +59,11 @@ export class RunsController {
   @Roles('admin')
   @Patch(':id/review')
   review(
+    @CurrentUser() user: AuthUser,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: ReviewRunDto,
   ) {
-    return this.runsService.review(id, dto);
+    return this.runsService.review(id, dto, user);
   }
 
   @UseGuards(JwtAuthGuard)

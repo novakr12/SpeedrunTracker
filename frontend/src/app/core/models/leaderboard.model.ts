@@ -6,6 +6,9 @@ export interface LeaderboardEntry {
   timeMs: number;
   videoUrl?: string;
   playedAt?: string | null;
+  verifiedBy: string | null;
+  verifiedAt: string | null;
+  reviewComment: string | null;
 }
 
 export interface LeaderboardCategory {

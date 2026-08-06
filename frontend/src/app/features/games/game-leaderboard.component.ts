@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -152,6 +158,7 @@ import { selectIsAdmin } from '../../store/auth/auth.feature';
                   <th>Time</th>
                   <th>Video</th>
                   <th>Played</th>
+                  <th>Verified by</th>
                 </tr>
               </thead>
               <tbody>
@@ -175,6 +182,44 @@ import { selectIsAdmin } from '../../store/auth/auth.feature';
                     <td>
                       @if (entry.playedAt) {
                         {{ entry.playedAt | date: 'mediumDate' }}
+                      } @else {
+                        <span class="muted">—</span>
+                      }
+                    </td>
+                    <td class="verified-cell">
+                      @if (entry.verifiedBy) {
+                        <button
+                          type="button"
+                          class="verified-by"
+                          [attr.aria-expanded]="openRunId === entry.runId"
+                          (click)="toggleVerified(entry.runId, $event)"
+                        >
+                          {{ entry.verifiedBy }}
+                        </button>
+
+                        @if (openRunId === entry.runId) {
+                          <div
+                            class="review-popover"
+                            (click)="$event.stopPropagation()"
+                          >
+                            <p class="label">Verified by</p>
+                            <p class="value">{{ entry.verifiedBy }}</p>
+
+                            @if (entry.verifiedAt) {
+                              <p class="label">When</p>
+                              <p class="value">
+                                {{ entry.verifiedAt | date: 'medium' }}
+                              </p>
+                            }
+
+                            @if (entry.reviewComment) {
+                              <p class="label">Comment</p>
+                              <p class="value quote">
+                                {{ entry.reviewComment }}
+                              </p>
+                            }
+                          </div>
+                        }
                       } @else {
                         <span class="muted">—</span>
                       }
@@ -211,6 +256,7 @@ export class GameLeaderboardComponent implements OnInit, OnDestroy {
   game: Game | null = null;
   categories: Category[] = [];
   editing = false;
+  openRunId: string | null = null;
   editPlatforms = new Set<string>();
   editTags = '';
   categoryNames: Record<string, string> = {};
@@ -261,6 +307,21 @@ export class GameLeaderboardComponent implements OnInit, OnDestroy {
 
   selectCategory(categoryId: string): void {
     this.selectedCategoryId$.next(categoryId);
+  }
+
+  toggleVerified(runId: string, event: MouseEvent): void {
+    event.stopPropagation();
+    this.openRunId = this.openRunId === runId ? null : runId;
+  }
+
+  @HostListener('document:click')
+  closeVerified(): void {
+    this.openRunId = null;
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    this.openRunId = null;
   }
 
   startEdit(): void {

@@ -41,7 +41,11 @@ export class RunsService {
 
   findAll(): Promise<Run[]> {
     return this.runsRepository.find({
-      relations: { user: true, game: true, category: true },
+      relations: { user: true, game: true, category: true, reviewedBy: true },
+      select: {
+        user: { id: true, username: true },
+        reviewedBy: { id: true, username: true },
+      },
       order: { timeMs: 'ASC' },
     });
   }
@@ -51,7 +55,11 @@ export class RunsService {
     const categories = await this.categoriesService.findByGame(gameId);
     const runs = await this.runsRepository.find({
       where: { gameId, status: 'accepted' },
-      relations: { user: true },
+      relations: { user: true, reviewedBy: true },
+      select: {
+        user: { id: true, username: true },
+        reviewedBy: { id: true, username: true },
+      },
       order: { timeMs: 'ASC' },
     });
 
@@ -89,7 +97,11 @@ export class RunsService {
   async findOne(id: string): Promise<Run> {
     const run = await this.runsRepository.findOne({
       where: { id },
-      relations: { user: true, game: true, category: true },
+      relations: { user: true, game: true, category: true, reviewedBy: true },
+      select: {
+        user: { id: true, username: true },
+        reviewedBy: { id: true, username: true },
+      },
     });
     if (!run) {
       throw new NotFoundException(`Run ${id} not found`);
@@ -125,12 +137,19 @@ export class RunsService {
     return this.runsRepository.save(run);
   }
 
-  async review(id: string, dto: ReviewRunDto): Promise<Run> {
-    const run = await this.findOne(id);
-    run.status = dto.status;
-    run.reviewComment = dto.comment ?? null;
-    run.reviewedAt = new Date();
-    return this.runsRepository.save(run);
+  async review(
+    id: string,
+    dto: ReviewRunDto,
+    actor: AuthUser,
+  ): Promise<Run> {
+    await this.findOne(id);
+    await this.runsRepository.update(id, {
+      status: dto.status,
+      reviewComment: dto.comment ?? null,
+      reviewedAt: new Date(),
+      reviewedById: actor.userId,
+    });
+    return this.findOne(id);
   }
 
   async remove(id: string, actor: AuthUser): Promise<void> {
@@ -160,6 +179,9 @@ export class RunsService {
         timeMs: run.timeMs,
         videoUrl: run.videoUrl ?? undefined,
         playedAt: run.playedAt ?? null,
+        verifiedBy: run.reviewedBy?.username ?? null,
+        verifiedAt: run.reviewedAt ?? null,
+        reviewComment: run.reviewComment ?? null,
       };
     });
   }

@@ -13,6 +13,8 @@ export interface Run {
   status: RunStatus;
   reviewComment?: string | null;
   reviewedAt?: string | null;
+  reviewedById?: string | null;
+  reviewedBy?: { id: string; username: string } | null;
   playedAt?: string;
   createdAt?: string;
   user?: AuthUser;

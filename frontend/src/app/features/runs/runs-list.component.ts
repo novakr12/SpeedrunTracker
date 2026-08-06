@@ -1,5 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { AsyncPipe } from '@angular/common';
+import { Component, HostListener, OnInit, inject } from '@angular/core';
+import { AsyncPipe, DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { MsToTimePipe } from '../../shared/ms-to-time.pipe';
@@ -12,7 +12,7 @@ import {
 @Component({
   selector: 'app-runs-list',
   standalone: true,
-  imports: [AsyncPipe, RouterLink, MsToTimePipe],
+  imports: [AsyncPipe, DatePipe, RouterLink, MsToTimePipe],
   template: `
     <section class="page">
       <header>
@@ -21,8 +21,8 @@ import {
       </header>
 
       <p class="muted hint">
-        Every submitted run, including ones still awaiting review. For ranked
-        leaderboards, open a game from the Games page.
+        Every submitted run, including ones still awaiting review. Click a
+        reviewed status to see who decided it and why.
       </p>
 
       @if (loading$ | async) {
@@ -46,8 +46,45 @@ import {
               <td>{{ run.category?.name || '—' }}</td>
               <td>{{ run.user?.username || '—' }}</td>
               <td class="time">{{ run.timeMs | msToTime }}</td>
-              <td [title]="run.reviewComment || ''">
-                {{ statusLabel(run.status) }}
+              <td class="status-cell">
+                @if (run.status === 'pending') {
+                  <span class="status-badge pending">Pending</span>
+                } @else {
+                  <button
+                    type="button"
+                    class="status-badge"
+                    [class.accepted]="run.status === 'accepted'"
+                    [class.rejected]="run.status === 'rejected'"
+                    [attr.aria-expanded]="openRunId === run.id"
+                    (click)="toggleDetails(run.id, $event)"
+                  >
+                    {{ statusLabel(run.status) }}
+                  </button>
+
+                  @if (openRunId === run.id) {
+                    <div
+                      class="review-popover"
+                      (click)="$event.stopPropagation()"
+                    >
+                      <p class="label">{{ statusLabel(run.status) }} by</p>
+                      <p class="value">
+                        {{ run.reviewedBy?.username || 'Unknown moderator' }}
+                      </p>
+
+                      @if (run.reviewedAt) {
+                        <p class="label">When</p>
+                        <p class="value">
+                          {{ run.reviewedAt | date: 'medium' }}
+                        </p>
+                      }
+
+                      @if (run.reviewComment) {
+                        <p class="label">Comment</p>
+                        <p class="value quote">{{ run.reviewComment }}</p>
+                      }
+                    </div>
+                  }
+                }
               </td>
             </tr>
           } @empty {
@@ -67,8 +104,25 @@ export class RunsListComponent implements OnInit {
   readonly runs$ = this.store.select(selectAllRuns);
   readonly loading$ = this.store.select(selectRunsLoading);
 
+  openRunId: string | null = null;
+
   ngOnInit(): void {
     this.store.dispatch(RunsActions.load());
+  }
+
+  toggleDetails(runId: string, event: MouseEvent): void {
+    event.stopPropagation();
+    this.openRunId = this.openRunId === runId ? null : runId;
+  }
+
+  @HostListener('document:click')
+  closeDetails(): void {
+    this.openRunId = null;
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    this.openRunId = null;
   }
 
   statusLabel(status: string): string {

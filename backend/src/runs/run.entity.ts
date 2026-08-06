@@ -52,6 +52,13 @@ export class Run {
   @Column({ type: 'text', nullable: true })
   reviewComment: string | null;
 
+  @ManyToOne(() => User, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'reviewedById' })
+  reviewedBy: User | null;
+
+  @Column({ type: 'uuid', nullable: true })
+  reviewedById: string | null;
+
   @Column({ type: 'timestamp', nullable: true })
   reviewedAt: Date | null;
 
