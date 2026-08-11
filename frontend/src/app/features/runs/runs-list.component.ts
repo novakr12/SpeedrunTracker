@@ -1,8 +1,9 @@
-import { Component, HostListener, OnInit, inject } from '@angular/core';
-import { AsyncPipe, DatePipe } from '@angular/common';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { MsToTimePipe } from '../../shared/ms-to-time.pipe';
+import { Subject, filter, fromEvent, merge, takeUntil } from 'rxjs';
+import { RunRowComponent } from './run-row.component';
 import { RunsActions } from '../../store/runs/runs.actions';
 import {
   selectAllRuns,
@@ -12,7 +13,7 @@ import {
 @Component({
   selector: 'app-runs-list',
   standalone: true,
-  imports: [AsyncPipe, DatePipe, RouterLink, MsToTimePipe],
+  imports: [AsyncPipe, RouterLink, RunRowComponent],
   template: `
     <section class="page">
       <header>
@@ -41,52 +42,12 @@ import {
         </thead>
         <tbody>
           @for (run of runs$ | async; track run.id) {
-            <tr>
-              <td>{{ run.game?.title || '—' }}</td>
-              <td>{{ run.category?.name || '—' }}</td>
-              <td>{{ run.user?.username || '—' }}</td>
-              <td class="time">{{ run.timeMs | msToTime }}</td>
-              <td class="status-cell">
-                @if (run.status === 'pending') {
-                  <span class="status-badge pending">Pending</span>
-                } @else {
-                  <button
-                    type="button"
-                    class="status-badge"
-                    [class.accepted]="run.status === 'accepted'"
-                    [class.rejected]="run.status === 'rejected'"
-                    [attr.aria-expanded]="openRunId === run.id"
-                    (click)="toggleDetails(run.id, $event)"
-                  >
-                    {{ statusLabel(run.status) }}
-                  </button>
-
-                  @if (openRunId === run.id) {
-                    <div
-                      class="review-popover"
-                      (click)="$event.stopPropagation()"
-                    >
-                      <p class="label">{{ statusLabel(run.status) }} by</p>
-                      <p class="value">
-                        {{ run.reviewedBy?.username || 'Unknown moderator' }}
-                      </p>
-
-                      @if (run.reviewedAt) {
-                        <p class="label">When</p>
-                        <p class="value">
-                          {{ run.reviewedAt | date: 'medium' }}
-                        </p>
-                      }
-
-                      @if (run.reviewComment) {
-                        <p class="label">Comment</p>
-                        <p class="value quote">{{ run.reviewComment }}</p>
-                      }
-                    </div>
-                  }
-                }
-              </td>
-            </tr>
+            <tr
+              app-run-row
+              [run]="run"
+              [expanded]="openRunId === run.id"
+              (toggle)="toggleDetails($event)"
+            ></tr>
           } @empty {
             <tr>
               <td colspan="5" class="muted">No runs yet.</td>
@@ -98,8 +59,9 @@ import {
   `,
   styleUrl: './runs-list.css',
 })
-export class RunsListComponent implements OnInit {
+export class RunsListComponent implements OnInit, OnDestroy {
   private readonly store = inject(Store);
+  private readonly destroy$ = new Subject<void>();
 
   readonly runs$ = this.store.select(selectAllRuns);
   readonly loading$ = this.store.select(selectRunsLoading);
@@ -108,30 +70,23 @@ export class RunsListComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.dispatch(RunsActions.load());
+
+    merge(
+      fromEvent(document, 'click'),
+      fromEvent<KeyboardEvent>(document, 'keydown').pipe(
+        filter((event) => event.key === 'Escape'),
+      ),
+    )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => (this.openRunId = null));
   }
 
-  toggleDetails(runId: string, event: MouseEvent): void {
-    event.stopPropagation();
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  toggleDetails(runId: string): void {
     this.openRunId = this.openRunId === runId ? null : runId;
-  }
-
-  @HostListener('document:click')
-  closeDetails(): void {
-    this.openRunId = null;
-  }
-
-  @HostListener('document:keydown.escape')
-  onEscape(): void {
-    this.openRunId = null;
-  }
-
-  statusLabel(status: string): string {
-    if (status === 'accepted') {
-      return 'Accepted';
-    }
-    if (status === 'rejected') {
-      return 'Rejected';
-    }
-    return 'Pending';
   }
 }

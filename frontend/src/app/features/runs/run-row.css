@@ -1,0 +1,83 @@
+td {
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  border-bottom: 1px solid #262b36;
+}
+
+.time {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.status-cell {
+  position: relative;
+}
+
+.status-badge {
+  padding: 0.15rem 0.55rem;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  font: inherit;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+button.status-badge {
+  cursor: pointer;
+}
+
+.status-badge.accepted {
+  border-color: rgba(34, 197, 94, 0.35);
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+
+.status-badge.rejected {
+  border-color: rgba(248, 113, 113, 0.35);
+  background: rgba(248, 113, 113, 0.15);
+  color: #f87171;
+}
+
+button.status-badge:hover {
+  border-color: currentColor;
+}
+
+.review-popover {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 20;
+  width: 260px;
+  padding: 0.85rem 1rem;
+  background: #1c202a;
+  border: 1px solid #2c3340;
+  border-radius: 10px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+  text-align: left;
+  cursor: default;
+}
+
+.review-popover .label {
+  margin: 0.6rem 0 0.15rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.review-popover .label:first-child {
+  margin-top: 0;
+}
+
+.review-popover .value {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #e6e6e6;
+  overflow-wrap: anywhere;
+}
+
+.review-popover .quote {
+  font-style: italic;
+  color: #aab2c0;
+}
