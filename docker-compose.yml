@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: speedrun
       POSTGRES_DB: speedrun
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - speedrun-data:/var/lib/postgresql/data
 
