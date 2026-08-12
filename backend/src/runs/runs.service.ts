@@ -5,14 +5,16 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Run } from './run.entity';
-import { CreateRunDto } from './dto/create-run.dto';
+import { CreateRunDto, RunSegmentDto } from './dto/create-run.dto';
 import { UpdateRunDto } from './dto/update-run.dto';
 import { ReviewRunDto } from './dto/review-run.dto';
 import {
   GameLeaderboard,
   LeaderboardEntry,
+  PersonalBest,
+  SegmentBest,
 } from './dto/leaderboard.types';
 import { AuthUser } from '../auth/decorators/current-user.decorator';
 import { UsersService } from '../users/users.service';
@@ -31,17 +33,30 @@ export class RunsService {
 
   async create(userId: string, dto: CreateRunDto): Promise<Run> {
     await this.validateReferences(userId, dto.gameId, dto.categoryId);
+    const segments = await this.buildSegments(
+      dto.categoryId,
+      dto.timeMs,
+      dto.segments,
+    );
     const run = this.runsRepository.create({
       ...dto,
+      segments,
       userId,
       playedAt: dto.playedAt ? new Date(dto.playedAt) : undefined,
     });
-    return this.runsRepository.save(run);
+    const saved = await this.runsRepository.save(run);
+    return this.findOne(saved.id);
   }
 
   findAll(): Promise<Run[]> {
     return this.runsRepository.find({
-      relations: { user: true, game: true, category: true, reviewedBy: true },
+      relations: {
+        user: true,
+        game: true,
+        category: true,
+        reviewedBy: true,
+        segments: true,
+      },
       select: {
         user: { id: true, username: true },
         reviewedBy: { id: true, username: true },
@@ -50,12 +65,55 @@ export class RunsService {
     });
   }
 
+  async personalBests(userId: string): Promise<PersonalBest[]> {
+    const runs = await this.runsRepository.find({
+      where: { userId, status: 'accepted' },
+      relations: { game: true, category: true },
+      order: { timeMs: 'ASC' },
+    });
+
+    const bestByCategory = new Map<string, Run>();
+    for (const run of runs) {
+      if (!bestByCategory.has(run.categoryId)) {
+        bestByCategory.set(run.categoryId, run);
+      }
+    }
+    if (!bestByCategory.size) {
+      return [];
+    }
+
+    const contenders = await this.runsRepository.find({
+      where: {
+        categoryId: In([...bestByCategory.keys()]),
+        status: 'accepted',
+      },
+      order: { timeMs: 'ASC' },
+    });
+    const worldRecords = new Map<string, number>();
+    for (const run of contenders) {
+      if (!worldRecords.has(run.categoryId)) {
+        worldRecords.set(run.categoryId, run.timeMs);
+      }
+    }
+
+    return [...bestByCategory.values()].map((run) => ({
+      runId: run.id,
+      gameId: run.gameId,
+      gameTitle: run.game?.title ?? 'Unknown',
+      categoryId: run.categoryId,
+      categoryName: run.category?.name ?? 'Unknown',
+      timeMs: run.timeMs,
+      playedAt: run.playedAt ?? null,
+      isWorldRecord: worldRecords.get(run.categoryId) === run.timeMs,
+    }));
+  }
+
   async leaderboardForGame(gameId: string): Promise<GameLeaderboard> {
     const game = await this.gamesService.findOne(gameId);
     const categories = await this.categoriesService.findByGame(gameId);
     const runs = await this.runsRepository.find({
       where: { gameId, status: 'accepted' },
-      relations: { user: true, reviewedBy: true },
+      relations: { user: true, reviewedBy: true, segments: true },
       select: {
         user: { id: true, username: true },
         reviewedBy: { id: true, username: true },
@@ -83,21 +141,54 @@ export class RunsService {
       }
     }
 
+    const runsByCategory = new Map<string, Run[]>();
+    for (const run of runs) {
+      const bucket = runsByCategory.get(run.categoryId);
+      if (bucket) {
+        bucket.push(run);
+      } else {
+        runsByCategory.set(run.categoryId, [run]);
+      }
+    }
+
     return {
       gameId: game.id,
       gameTitle: game.title,
-      categories: categories.map((category) => ({
-        categoryId: category.id,
-        categoryName: category.name,
-        entries: this.toRankedEntries(bestByCategory.get(category.id) ?? []),
-      })),
+      categories: categories.map((category) => {
+        const segmentBests = this.toSegmentBests(
+          category.segments ?? [],
+          runsByCategory.get(category.id) ?? [],
+        );
+        const complete = segmentBests.every(
+          (best) => best.durationMs !== null,
+        );
+        return {
+          categoryId: category.id,
+          categoryName: category.name,
+          entries: this.toRankedEntries(bestByCategory.get(category.id) ?? []),
+          segmentBests,
+          sumOfBestMs:
+            segmentBests.length && complete
+              ? segmentBests.reduce(
+                  (sum, best) => sum + (best.durationMs ?? 0),
+                  0,
+                )
+              : null,
+        };
+      }),
     };
   }
 
   async findOne(id: string): Promise<Run> {
     const run = await this.runsRepository.findOne({
       where: { id },
-      relations: { user: true, game: true, category: true, reviewedBy: true },
+      relations: {
+        user: true,
+        game: true,
+        category: true,
+        reviewedBy: true,
+        segments: true,
+      },
       select: {
         user: { id: true, username: true },
         reviewedBy: { id: true, username: true },
@@ -182,8 +273,88 @@ export class RunsService {
         verifiedBy: run.reviewedBy?.username ?? null,
         verifiedAt: run.reviewedAt ?? null,
         reviewComment: run.reviewComment ?? null,
+        segments: (run.segments ?? []).map((segment) => ({
+          segmentId: segment.segmentId,
+          durationMs: segment.durationMs,
+        })),
       };
     });
+  }
+
+  private toSegmentBests(
+    segments: { id: string; name: string; position: number }[],
+    runs: Run[],
+  ): SegmentBest[] {
+    return [...segments]
+      .sort((a, b) => a.position - b.position)
+      .map((segment) => {
+        let best: { run: Run; durationMs: number } | null = null;
+        for (const run of runs) {
+          const recorded = run.segments?.find(
+            (entry) => entry.segmentId === segment.id,
+          );
+          if (recorded && (!best || recorded.durationMs < best.durationMs)) {
+            best = { run, durationMs: recorded.durationMs };
+          }
+        }
+        return {
+          segmentId: segment.id,
+          segmentName: segment.name,
+          position: segment.position,
+          userId: best?.run.userId ?? null,
+          username: best?.run.user?.username ?? null,
+          runId: best?.run.id ?? null,
+          durationMs: best?.durationMs ?? null,
+        };
+      });
+  }
+
+  private async buildSegments(
+    categoryId: string,
+    timeMs: number,
+    provided: RunSegmentDto[] | undefined,
+  ): Promise<{ segmentId: string; durationMs: number }[] | undefined> {
+    if (!provided?.length) {
+      return undefined;
+    }
+
+    const category = await this.categoriesService.findOne(categoryId);
+    const defined = category.segments ?? [];
+    if (!defined.length) {
+      throw new BadRequestException(
+        'This category does not define any segments',
+      );
+    }
+
+    const providedIds = provided.map((segment) => segment.segmentId);
+    if (new Set(providedIds).size !== providedIds.length) {
+      throw new BadRequestException('Each segment can only be timed once');
+    }
+
+    const definedIds = new Set(defined.map((segment) => segment.id));
+    if (
+      providedIds.length !== definedIds.size ||
+      providedIds.some((id) => !definedIds.has(id))
+    ) {
+      throw new BadRequestException(
+        'Segment times must cover exactly the segments defined by the category',
+      );
+    }
+
+    const total = provided.reduce(
+      (sum, segment) => sum + segment.durationMs,
+      0,
+    );
+    if (total !== timeMs) {
+      throw new BadRequestException(
+        'Segment times must add up to the total run time',
+      );
+    }
+
+    return provided.map((segment) => ({
+      segmentId: segment.segmentId,
+      durationMs: segment.durationMs,
+    }));
   }
 
   private async validateReferences(

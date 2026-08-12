@@ -1,11 +1,24 @@
+import { Type } from 'class-transformer';
 import {
+  ArrayMaxSize,
+  IsArray,
   IsDateString,
   IsInt,
   IsOptional,
   IsString,
   IsUUID,
   Min,
+  ValidateNested,
 } from 'class-validator';
+
+export class RunSegmentDto {
+  @IsUUID()
+  segmentId: string;
+
+  @IsInt()
+  @Min(1)
+  durationMs: number;
+}
 
 export class CreateRunDto {
   @IsUUID()
@@ -25,4 +38,11 @@ export class CreateRunDto {
   @IsOptional()
   @IsDateString()
   playedAt?: string;
+
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(20)
+  @ValidateNested({ each: true })
+  @Type(() => RunSegmentDto)
+  segments?: RunSegmentDto[];
 }

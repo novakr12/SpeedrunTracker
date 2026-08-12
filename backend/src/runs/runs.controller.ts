@@ -40,6 +40,12 @@ export class RunsController {
     return this.runsService.leaderboardForGame(gameId);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('personal-bests')
+  personalBests(@CurrentUser() user: AuthUser) {
+    return this.runsService.personalBests(user.userId);
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.runsService.findOne(id);

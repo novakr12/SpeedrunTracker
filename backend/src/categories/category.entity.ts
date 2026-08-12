@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Game } from '../games/game.entity';
 import { Run } from '../runs/run.entity';
+import { CategorySegment } from './category-segment.entity';
 
 @Entity('categories')
 export class Category {
@@ -29,4 +30,7 @@ export class Category {
 
   @OneToMany(() => Run, (run) => run.category)
   runs: Run[];
+
+  @OneToMany(() => CategorySegment, (segment) => segment.category)
+  segments: CategorySegment[];
 }

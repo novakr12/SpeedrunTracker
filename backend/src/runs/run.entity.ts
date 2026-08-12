@@ -4,11 +4,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../users/user.entity';
 import { Game } from '../games/game.entity';
 import { Category } from '../categories/category.entity';
+import { RunSegment } from './run-segment.entity';
 
 export type RunStatus = 'pending' | 'accepted' | 'rejected';
 
@@ -61,6 +63,9 @@ export class Run {
 
   @Column({ type: 'timestamp', nullable: true })
   reviewedAt: Date | null;
+
+  @OneToMany(() => RunSegment, (segment) => segment.run, { cascade: true })
+  segments: RunSegment[];
 
   @Column({ type: 'timestamp', nullable: true })
   playedAt: Date;
