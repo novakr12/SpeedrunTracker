@@ -11,6 +11,7 @@
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "backend": "npm run start:dev --workspace backend",
-    "frontend": "npm start --workspace frontend"
+    "frontend": "npm start --workspace frontend",
+    "test": "npm test --workspace frontend"
   }
 }
