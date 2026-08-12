@@ -2,11 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Category } from '../categories/category.entity';
 import { Run } from '../runs/run.entity';
+import { User } from '../users/user.entity';
 
 @Entity('games')
 export class Game {
@@ -33,6 +35,9 @@ export class Game {
 
   @OneToMany(() => Run, (run) => run.game)
   runs: Run[];
+
+  @ManyToMany(() => User, (user) => user.followedGames)
+  followers: User[];
 
   @CreateDateColumn()
   createdAt: Date;

@@ -2,10 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Run } from '../runs/run.entity';
+import { Game } from '../games/game.entity';
 
 export type UserRole = 'user' | 'admin';
 
@@ -43,6 +46,14 @@ export class User {
 
   @OneToMany(() => Run, (run) => run.user)
   runs: Run[];
+
+  @ManyToMany(() => Game, (game) => game.followers)
+  @JoinTable({
+    name: 'user_followed_games',
+    joinColumn: { name: 'userId' },
+    inverseJoinColumn: { name: 'gameId' },
+  })
+  followedGames: Game[];
 
   @CreateDateColumn()
   createdAt: Date;
