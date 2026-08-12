@@ -105,3 +105,74 @@ h2 {
 .muted {
   color: #6b7280;
 }
+
+.wr-count {
+  margin-left: 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #facc15;
+}
+
+table.records {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+table.records th,
+table.records td {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid #262b36;
+}
+
+table.records th {
+  color: #aab2c0;
+  font-weight: 600;
+}
+
+table.records .time {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+table.records a {
+  color: #e6e6e6;
+}
+
+table.records a:hover {
+  color: var(--accent);
+}
+
+.wr {
+  margin-left: 0.35rem;
+  padding: 0.05rem 0.35rem;
+  border-radius: 999px;
+  background: rgba(250, 204, 21, 0.18);
+  border: 1px solid rgba(250, 204, 21, 0.45);
+  color: #facc15;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  vertical-align: middle;
+}
+
+.followed {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.followed-game {
+  padding: 0.35rem 0.7rem;
+  border: 1px solid #2c3340;
+  border-radius: 999px;
+  background: #171a22;
+  color: #e6e6e6;
+  font-size: 0.82rem;
+}
+
+.followed-game:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}

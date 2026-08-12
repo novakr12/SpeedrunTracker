@@ -65,4 +65,35 @@ export class GamesEffects {
       ),
     ),
   );
+
+  loadFollowed$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(GamesActions.loadFollowed),
+      switchMap(() =>
+        this.gamesService.getFollowed().pipe(
+          map((games) => GamesActions.loadFollowedSuccess({ games })),
+          catchError((err) =>
+            of(GamesActions.loadFollowedFailure({ error: toMessage(err) })),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  follow$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(GamesActions.follow, GamesActions.unfollow),
+      concatMap((action) =>
+        (action.type === GamesActions.follow.type
+          ? this.gamesService.follow(action.id)
+          : this.gamesService.unfollow(action.id)
+        ).pipe(
+          map((games) => GamesActions.followSuccess({ games })),
+          catchError((err) =>
+            of(GamesActions.followFailure({ error: toMessage(err) })),
+          ),
+        ),
+      ),
+    ),
+  );
 }

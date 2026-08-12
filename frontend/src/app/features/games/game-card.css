@@ -200,3 +200,21 @@
   padding: 0.35rem 0.5rem;
   font-size: 0.78rem;
 }
+
+.card button.follow {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid #2c3340;
+  background: transparent;
+  color: #aab2c0;
+}
+
+.card button.follow:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.card button.follow.following {
+  border-color: rgba(250, 204, 21, 0.45);
+  background: rgba(250, 204, 21, 0.12);
+  color: #facc15;
+}

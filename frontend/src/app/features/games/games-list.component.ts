@@ -15,7 +15,9 @@ import { PLATFORMS } from '../../shared/platforms';
 import { GamesActions } from '../../store/games/games.actions';
 import {
   selectFilteredGames,
+  selectFollowedGameIds,
   selectGamesError,
+  selectGamesFollowedOnly,
   selectGamesLoading,
 } from '../../store/games/games.feature';
 import { CategoriesActions } from '../../store/categories/categories.actions';
@@ -30,6 +32,14 @@ import { selectIsAdmin } from '../../store/auth/auth.feature';
     <section class="page">
       <header>
         <h1>Games</h1>
+        <label class="followed-toggle">
+          <input
+            type="checkbox"
+            [checked]="(followedOnly$ | async) ?? false"
+            (change)="setFollowedOnly($any($event.target).checked)"
+          />
+          Followed only
+        </label>
         <input
           class="search"
           type="search"
@@ -93,6 +103,11 @@ import { selectIsAdmin } from '../../store/auth/auth.feature';
           placeholder="Category (e.g. 100%)"
           formControlName="name"
         />
+        <input
+          type="text"
+          placeholder="Splits, in order (optional)"
+          formControlName="segments"
+        />
         <button type="submit" [disabled]="categoryForm.invalid">
           Add category
         </button>
@@ -113,8 +128,10 @@ import { selectIsAdmin } from '../../store/auth/auth.feature';
             [game]="game"
             [categories]="categoriesByGame[game.id] || []"
             [canManage]="(isAdmin$ | async) ?? false"
+            [isFollowed]="followedIds.includes(game.id)"
             (open)="onOpen($event)"
             (remove)="onRemove($event)"
+            (toggleFollow)="onToggleFollow($event)"
           />
         } @empty {
           <p class="muted">No games found.</p>
@@ -134,8 +151,11 @@ export class GamesListComponent implements OnInit, OnDestroy {
   readonly loading$ = this.store.select(selectGamesLoading);
   readonly error$ = this.store.select(selectGamesError);
   readonly isAdmin$ = this.store.select(selectIsAdmin);
+  readonly followedOnly$ = this.store.select(selectGamesFollowedOnly);
 
   readonly search = new FormControl('', { nonNullable: true });
+
+  followedIds: string[] = [];
 
   readonly platforms = PLATFORMS;
   readonly selectedPlatforms = new Set<string>();
@@ -150,6 +170,7 @@ export class GamesListComponent implements OnInit, OnDestroy {
   readonly categoryForm = this.fb.nonNullable.group({
     gameId: ['', [Validators.required]],
     name: ['', [Validators.required]],
+    segments: [''],
   });
 
   categoriesByGame: Record<string, Category[]> = {};
@@ -157,6 +178,12 @@ export class GamesListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.store.dispatch(GamesActions.load());
     this.store.dispatch(CategoriesActions.load());
+    this.store.dispatch(GamesActions.loadFollowed());
+
+    this.store
+      .select(selectFollowedGameIds)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((ids) => (this.followedIds = ids));
 
     this.search.valueChanges
       .pipe(debounceTime(250), distinctUntilChanged(), takeUntil(this.destroy$))
@@ -176,6 +203,18 @@ export class GamesListComponent implements OnInit, OnDestroy {
 
   onRemove(id: string): void {
     this.store.dispatch(GamesActions.delete({ id }));
+  }
+
+  onToggleFollow(id: string): void {
+    this.store.dispatch(
+      this.followedIds.includes(id)
+        ? GamesActions.unfollow({ id })
+        : GamesActions.follow({ id }),
+    );
+  }
+
+  setFollowedOnly(followedOnly: boolean): void {
+    this.store.dispatch(GamesActions.setFollowedOnly({ followedOnly }));
   }
 
   togglePlatform(platform: string, checked: boolean): void {
@@ -215,9 +254,18 @@ export class GamesListComponent implements OnInit, OnDestroy {
     if (this.categoryForm.invalid) {
       return;
     }
-    const value = this.categoryForm.getRawValue();
-    this.store.dispatch(CategoriesActions.create({ dto: value }));
+    const { gameId, name, segments } = this.categoryForm.getRawValue();
+    const splits = segments
+      .split(',')
+      .map((segment) => segment.trim())
+      .filter((segment) => segment.length > 0);
+    this.store.dispatch(
+      CategoriesActions.create({
+        dto: { gameId, name, segments: splits.length ? splits : undefined },
+      }),
+    );
     this.categoryForm.controls.name.reset();
+    this.categoryForm.controls.segments.reset();
   }
 
   ngOnDestroy(): void {

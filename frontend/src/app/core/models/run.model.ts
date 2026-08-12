@@ -3,6 +3,18 @@ import { AuthUser } from './auth.model';
 
 export type RunStatus = 'pending' | 'accepted' | 'rejected';
 
+export interface RunSegment {
+  id: string;
+  runId: string;
+  segmentId: string;
+  durationMs: number;
+}
+
+export interface RunSegmentInput {
+  segmentId: string;
+  durationMs: number;
+}
+
 export interface Run {
   id: string;
   userId: string;
@@ -20,6 +32,7 @@ export interface Run {
   user?: AuthUser;
   game?: Game;
   category?: Category;
+  segments?: RunSegment[];
 }
 
 export interface CreateRunDto {
@@ -28,6 +41,7 @@ export interface CreateRunDto {
   timeMs: number;
   videoUrl?: string;
   playedAt?: string;
+  segments?: RunSegmentInput[];
 }
 
 export interface ReviewRunDto {

@@ -9,12 +9,16 @@ export interface GamesState extends EntityState<Game> {
   loading: boolean;
   error: string | null;
   search: string;
+  followedIds: string[];
+  followedOnly: boolean;
 }
 
 const initialState: GamesState = gamesAdapter.getInitialState({
   loading: false,
   error: null,
   search: '',
+  followedIds: [],
+  followedOnly: false,
 });
 
 export const gamesFeature = createFeature({
@@ -49,20 +53,48 @@ export const gamesFeature = createFeature({
     ),
     on(GamesActions.deleteFailure, (state, { error }) => ({ ...state, error })),
     on(GamesActions.setSearch, (state, { search }) => ({ ...state, search })),
+    on(GamesActions.setFollowedOnly, (state, { followedOnly }) => ({
+      ...state,
+      followedOnly,
+    })),
+    on(
+      GamesActions.loadFollowedSuccess,
+      GamesActions.followSuccess,
+      (state, { games }) => ({
+        ...state,
+        followedIds: games.map((game) => game.id),
+      }),
+    ),
+    on(
+      GamesActions.loadFollowedFailure,
+      GamesActions.followFailure,
+      (state, { error }) => ({ ...state, error }),
+    ),
   ),
-  extraSelectors: ({ selectGamesState, selectSearch }) => {
+  extraSelectors: ({
+    selectGamesState,
+    selectSearch,
+    selectFollowedIds,
+    selectFollowedOnly,
+  }) => {
     const { selectAll } = gamesAdapter.getSelectors(selectGamesState);
     return {
       selectAllGames: selectAll,
       selectFilteredGames: createSelector(
         selectAll,
         selectSearch,
-        (games, search) => {
+        selectFollowedIds,
+        selectFollowedOnly,
+        (games, search, followedIds, followedOnly) => {
           const term = search.trim().toLowerCase();
-          if (!term) {
-            return games;
-          }
+          const followed = new Set(followedIds);
           return games.filter((game) => {
+            if (followedOnly && !followed.has(game.id)) {
+              return false;
+            }
+            if (!term) {
+              return true;
+            }
             const inTitle = game.title.toLowerCase().includes(term);
             const inTags = (game.tags ?? []).some((tag) =>
               tag.toLowerCase().includes(term),
@@ -74,6 +106,14 @@ export const gamesFeature = createFeature({
           });
         },
       ),
+      selectFollowedGames: createSelector(
+        selectAll,
+        selectFollowedIds,
+        (games, followedIds) => {
+          const followed = new Set(followedIds);
+          return games.filter((game) => followed.has(game.id));
+        },
+      ),
     };
   },
 });
@@ -82,6 +122,9 @@ export const {
   selectLoading: selectGamesLoading,
   selectError: selectGamesError,
   selectSearch: selectGamesSearch,
+  selectFollowedIds: selectFollowedGameIds,
+  selectFollowedOnly: selectGamesFollowedOnly,
   selectAllGames,
   selectFilteredGames,
+  selectFollowedGames,
 } = gamesFeature;

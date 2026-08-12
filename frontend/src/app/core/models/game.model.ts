@@ -1,8 +1,16 @@
+export interface CategorySegment {
+  id: string;
+  categoryId: string;
+  name: string;
+  position: number;
+}
+
 export interface Category {
   id: string;
   name: string;
   rules?: string;
   gameId: string;
+  segments?: CategorySegment[];
 }
 
 export interface Game {
@@ -29,6 +37,7 @@ export type UpdateGameDto = Partial<CreateGameDto>;
 export interface CreateCategoryDto {
   name: string;
   gameId: string;
+  segments?: string[];
 }
 
 export type UpdateCategoryDto = Partial<CreateCategoryDto>;

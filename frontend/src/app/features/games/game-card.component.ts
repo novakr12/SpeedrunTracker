@@ -56,13 +56,22 @@ import { Category, Game } from '../../core/models/game.model';
         <p class="empty">No categories</p>
       }
 
-      @if (canManage) {
-        <div class="actions">
+      <div class="actions">
+        <button
+          type="button"
+          class="follow"
+          [class.following]="isFollowed"
+          [attr.aria-pressed]="isFollowed"
+          (click)="onToggleFollow($event)"
+        >
+          {{ isFollowed ? '★ Following' : '☆ Follow' }}
+        </button>
+        @if (canManage) {
           <button type="button" class="danger" (click)="onDelete($event)">
             Delete
           </button>
-        </div>
-      }
+        }
+      </div>
     </article>
   `,
   styleUrl: './game-card.css',
@@ -71,14 +80,21 @@ export class GameCardComponent {
   @Input({ required: true }) game!: Game;
   @Input() categories: Category[] = [];
   @Input() canManage = false;
+  @Input() isFollowed = false;
   @Output() open = new EventEmitter<Game>();
   @Output() remove = new EventEmitter<string>();
+  @Output() toggleFollow = new EventEmitter<string>();
 
   coverFailed = false;
 
   onDelete(event: Event): void {
     event.stopPropagation();
     this.remove.emit(this.game.id);
+  }
+
+  onToggleFollow(event: Event): void {
+    event.stopPropagation();
+    this.toggleFollow.emit(this.game.id);
   }
 
   onSpace(event: Event): void {

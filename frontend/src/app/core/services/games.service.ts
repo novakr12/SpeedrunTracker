@@ -27,4 +27,16 @@ export class GamesService {
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.base}/${id}`);
   }
+
+  getFollowed(): Observable<Game[]> {
+    return this.http.get<Game[]>(`${this.base}/followed`);
+  }
+
+  follow(id: string): Observable<Game[]> {
+    return this.http.post<Game[]>(`${this.base}/${id}/follow`, {});
+  }
+
+  unfollow(id: string): Observable<Game[]> {
+    return this.http.delete<Game[]>(`${this.base}/${id}/follow`);
+  }
 }

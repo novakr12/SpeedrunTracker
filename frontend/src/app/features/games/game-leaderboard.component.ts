@@ -13,6 +13,10 @@ import { BehaviorSubject, Subject, combineLatest, map, takeUntil } from 'rxjs';
 import { MsToTimePipe } from '../../shared/ms-to-time.pipe';
 import { PLATFORMS } from '../../shared/platforms';
 import { Category, Game } from '../../core/models/game.model';
+import {
+  LeaderboardCategory,
+  LeaderboardEntry,
+} from '../../core/models/leaderboard.model';
 import { LeaderboardActions } from '../../store/leaderboard/leaderboard.actions';
 import {
   selectLeaderboard,
@@ -20,10 +24,19 @@ import {
   selectLeaderboardLoading,
 } from '../../store/leaderboard/leaderboard.feature';
 import { GamesActions } from '../../store/games/games.actions';
-import { selectAllGames } from '../../store/games/games.feature';
+import {
+  selectAllGames,
+  selectFollowedGameIds,
+} from '../../store/games/games.feature';
 import { CategoriesActions } from '../../store/categories/categories.actions';
 import { selectCategoriesByGame } from '../../store/categories/categories.feature';
 import { selectIsAdmin } from '../../store/auth/auth.feature';
+
+interface SplitRow {
+  name: string;
+  durationMs: number | null;
+  deltaMs: number | null;
+}
 
 @Component({
   selector: 'app-game-leaderboard',
@@ -36,6 +49,14 @@ import { selectIsAdmin } from '../../store/auth/auth.feature';
         <h1>{{ game?.title || (view$ | async)?.gameTitle || 'Leaderboard' }}</h1>
 
         <div class="page-actions">
+          <button
+            type="button"
+            class="btn follow"
+            [class.following]="isFollowing"
+            (click)="toggleFollow()"
+          >
+            {{ isFollowing ? 'Following' : 'Follow' }}
+          </button>
           <a
             class="btn primary"
             routerLink="/runs/new"
@@ -89,25 +110,36 @@ import { selectIsAdmin } from '../../store/auth/auth.feature';
           />
 
           @if (categories.length) {
-            <p class="label">Categories</p>
+            <p class="label">Categories and their splits</p>
             <div class="cat-editor">
               @for (category of categories; track category.id) {
-                <div class="cat-row">
-                  <input type="text" [(ngModel)]="categoryNames[category.id]" />
-                  <button
-                    type="button"
-                    (click)="saveCategory(category.id)"
-                    [disabled]="!categoryNames[category.id]"
-                  >
-                    Save
-                  </button>
-                  <button
-                    type="button"
-                    class="danger"
-                    (click)="deleteCategory(category.id)"
-                  >
-                    ×
-                  </button>
+                <div class="cat-block">
+                  <div class="cat-row">
+                    <input
+                      type="text"
+                      [(ngModel)]="categoryNames[category.id]"
+                    />
+                    <button
+                      type="button"
+                      (click)="saveCategory(category.id)"
+                      [disabled]="!categoryNames[category.id]"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      class="danger"
+                      (click)="deleteCategory(category.id)"
+                    >
+                      ×
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    class="segments-input"
+                    placeholder="Splits, in order (comma separated)"
+                    [(ngModel)]="categorySegments[category.id]"
+                  />
                 </div>
               }
             </div>
@@ -164,9 +196,26 @@ import { selectIsAdmin } from '../../store/auth/auth.feature';
               <tbody>
                 @for (entry of category.entries; track entry.runId) {
                   <tr>
-                    <td class="rank">{{ entry.rank }}</td>
+                    <td class="rank">
+                      {{ entry.rank }}
+                      @if (entry.rank === 1) {
+                        <span class="wr" title="World record">WR</span>
+                      }
+                    </td>
                     <td>{{ entry.username }}</td>
-                    <td class="time">{{ entry.timeMs | msToTime }}</td>
+                    <td class="time">
+                      {{ entry.timeMs | msToTime }}
+                      @if (entry.segments.length) {
+                        <button
+                          type="button"
+                          class="splits-toggle"
+                          [attr.aria-expanded]="openSplitsRunId === entry.runId"
+                          (click)="toggleSplits(entry, category, $event)"
+                        >
+                          splits
+                        </button>
+                      }
+                    </td>
                     <td>
                       @if (entry.videoUrl) {
                         <a
@@ -225,11 +274,90 @@ import { selectIsAdmin } from '../../store/auth/auth.feature';
                       }
                     </td>
                   </tr>
+
+                  @if (openSplitsRunId === entry.runId) {
+                    <tr class="splits-row">
+                      <td colspan="6">
+                        <table class="splits">
+                          <tbody>
+                            @for (split of openSplits; track split.name) {
+                              <tr>
+                                <td class="split-name">{{ split.name }}</td>
+                                <td class="time">
+                                  {{ split.durationMs | msToTime }}
+                                </td>
+                                <td class="split-delta">
+                                  @if (split.deltaMs === null) {
+                                    <span class="muted">—</span>
+                                  } @else if (split.deltaMs === 0) {
+                                    <span class="best">best</span>
+                                  } @else {
+                                    <span class="behind">{{
+                                      formatDelta(split.deltaMs)
+                                    }}</span>
+                                  }
+                                </td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  }
                 }
               </tbody>
             </table>
           } @else {
             <p class="muted">No accepted runs yet in {{ category.categoryName }}.</p>
+          }
+
+          @if (category.segmentBests.length) {
+            <section class="segment-bests">
+              <h2>Best segments</h2>
+              <p class="muted">
+                Fastest recorded time for each split, taken from every accepted
+                run in this category.
+              </p>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Split</th>
+                    <th>Best</th>
+                    <th>Runner</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (best of category.segmentBests; track best.segmentId) {
+                    <tr>
+                      <td>{{ best.segmentName }}</td>
+                      <td class="time">
+                        @if (best.durationMs !== null) {
+                          {{ best.durationMs | msToTime }}
+                        } @else {
+                          <span class="muted">—</span>
+                        }
+                      </td>
+                      <td>
+                        {{ best.username || '—' }}
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+
+              @if (category.sumOfBestMs !== null) {
+                <p class="sum-of-best">
+                  Sum of best segments:
+                  <strong>{{ category.sumOfBestMs | msToTime }}</strong>
+                  @if (bestTimeMs(category); as best) {
+                    <span class="muted">
+                      — {{ formatDelta(category.sumOfBestMs - best) }} against
+                      the current record
+                    </span>
+                  }
+                </p>
+              }
+            </section>
           }
         } @else {
           <p class="muted">This game has no categories yet.</p>
@@ -257,9 +385,13 @@ export class GameLeaderboardComponent implements OnInit, OnDestroy {
   categories: Category[] = [];
   editing = false;
   openRunId: string | null = null;
+  openSplitsRunId: string | null = null;
+  openSplits: SplitRow[] = [];
+  isFollowing = false;
   editPlatforms = new Set<string>();
   editTags = '';
   categoryNames: Record<string, string> = {};
+  categorySegments: Record<string, string> = {};
 
   readonly view$ = combineLatest([
     this.store.select(selectLeaderboard),
@@ -280,6 +412,7 @@ export class GameLeaderboardComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.store.dispatch(GamesActions.load());
     this.store.dispatch(CategoriesActions.load());
+    this.store.dispatch(GamesActions.loadFollowed());
 
     this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       const gameId = params.get('id');
@@ -295,6 +428,12 @@ export class GameLeaderboardComponent implements OnInit, OnDestroy {
         this.game = games.find((g) => g.id === id) ?? null;
       });
 
+    combineLatest([this.store.select(selectFollowedGameIds), this.gameId$])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([followedIds, id]) => {
+        this.isFollowing = !!id && followedIds.includes(id);
+      });
+
     combineLatest([this.store.select(selectCategoriesByGame), this.gameId$])
       .pipe(takeUntil(this.destroy$))
       .subscribe(([grouped, id]) => {
@@ -307,11 +446,60 @@ export class GameLeaderboardComponent implements OnInit, OnDestroy {
 
   selectCategory(categoryId: string): void {
     this.selectedCategoryId$.next(categoryId);
+    this.openSplitsRunId = null;
+  }
+
+  toggleFollow(): void {
+    const gameId = this.gameId$.value;
+    if (!gameId) {
+      return;
+    }
+    this.store.dispatch(
+      this.isFollowing
+        ? GamesActions.unfollow({ id: gameId })
+        : GamesActions.follow({ id: gameId }),
+    );
   }
 
   toggleVerified(runId: string, event: MouseEvent): void {
     event.stopPropagation();
     this.openRunId = this.openRunId === runId ? null : runId;
+  }
+
+  toggleSplits(
+    entry: LeaderboardEntry,
+    category: LeaderboardCategory,
+    event: MouseEvent,
+  ): void {
+    event.stopPropagation();
+    if (this.openSplitsRunId === entry.runId) {
+      this.openSplitsRunId = null;
+      this.openSplits = [];
+      return;
+    }
+    this.openSplitsRunId = entry.runId;
+    this.openSplits = category.segmentBests.map((best) => {
+      const recorded = entry.segments.find(
+        (segment) => segment.segmentId === best.segmentId,
+      );
+      return {
+        name: best.segmentName,
+        durationMs: recorded?.durationMs ?? null,
+        deltaMs:
+          recorded && best.durationMs !== null
+            ? recorded.durationMs - best.durationMs
+            : null,
+      };
+    });
+  }
+
+  bestTimeMs(category: LeaderboardCategory): number | null {
+    return category.entries.length ? category.entries[0].timeMs : null;
+  }
+
+  formatDelta(deltaMs: number): string {
+    const seconds = (Math.abs(deltaMs) / 1000).toFixed(2);
+    return `${deltaMs > 0 ? '+' : '−'}${seconds}s`;
   }
 
   @HostListener('document:click')
@@ -358,11 +546,16 @@ export class GameLeaderboardComponent implements OnInit, OnDestroy {
 
   saveCategory(id: string): void {
     const name = this.categoryNames[id]?.trim();
-    if (name) {
-      this.store.dispatch(
-        CategoriesActions.update({ id, changes: { name } }),
-      );
+    if (!name) {
+      return;
     }
+    const segments = (this.categorySegments[id] ?? '')
+      .split(',')
+      .map((segment) => segment.trim())
+      .filter((segment) => segment.length > 0);
+    this.store.dispatch(
+      CategoriesActions.update({ id, changes: { name, segments } }),
+    );
   }
 
   deleteCategory(id: string): void {
@@ -371,10 +564,18 @@ export class GameLeaderboardComponent implements OnInit, OnDestroy {
 
   private syncCategoryNames(): void {
     const names: Record<string, string> = {};
+    const segments: Record<string, string> = {};
     this.categories.forEach((category) => {
       names[category.id] = this.categoryNames[category.id] ?? category.name;
+      segments[category.id] =
+        this.categorySegments[category.id] ??
+        [...(category.segments ?? [])]
+          .sort((a, b) => a.position - b.position)
+          .map((segment) => segment.name)
+          .join(', ');
     });
     this.categoryNames = names;
+    this.categorySegments = segments;
   }
 
   ngOnDestroy(): void {

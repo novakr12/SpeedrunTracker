@@ -56,3 +56,53 @@ button:disabled {
   color: #ff6b6b;
   font-size: 0.85rem;
 }
+
+.segments {
+  margin: 0;
+  padding: 0.9rem 1rem 1rem;
+  border: 1px solid #2c3340;
+  border-radius: 10px;
+}
+
+.segments legend {
+  padding: 0 0.4rem;
+  font-size: 0.85rem;
+  color: #aab2c0;
+}
+
+.muted {
+  margin: 0 0 0.8rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.segment-row {
+  display: grid;
+  grid-template-columns: 1fr 4.5rem 4.5rem;
+  align-items: end;
+  gap: 0.6rem;
+  margin-bottom: 0.55rem;
+}
+
+.segment-name {
+  padding-bottom: 0.55rem;
+  font-size: 0.85rem;
+  color: #e6e6e6;
+  overflow-wrap: anywhere;
+}
+
+.segment-total {
+  margin: 0.9rem 0 0;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  color: #22c55e;
+}
+
+.segment-total.mismatch {
+  color: #fbbf24;
+}
+
+.segment-total .delta {
+  margin-left: 0.35rem;
+  font-weight: 600;
+}

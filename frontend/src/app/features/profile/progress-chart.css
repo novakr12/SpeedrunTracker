@@ -1,0 +1,80 @@
+.chart {
+  margin: 0 0 1.5rem;
+  padding: 1rem 1.1rem 0.9rem;
+  background: #171a22;
+  border: 1px solid #262b36;
+  border-radius: 12px;
+}
+
+figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.title {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.meta {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-variant-numeric: tabular-nums;
+}
+
+.meta strong {
+  color: #e6e6e6;
+}
+
+.meta .gain {
+  color: #22c55e;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.axis {
+  stroke: #262b36;
+  stroke-width: 1;
+}
+
+.line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.point {
+  fill: #171a22;
+  stroke: var(--accent);
+  stroke-width: 2;
+  cursor: pointer;
+}
+
+.point.record {
+  fill: #22c55e;
+  stroke: #22c55e;
+}
+
+.point:hover {
+  stroke: #fff;
+}
+
+.scale {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.35rem;
+  font-size: 0.72rem;
+  color: #6b7280;
+  font-variant-numeric: tabular-nums;
+}

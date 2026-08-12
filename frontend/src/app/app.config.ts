@@ -20,6 +20,10 @@ import { leaderboardFeature } from './store/leaderboard/leaderboard.feature';
 import { LeaderboardEffects } from './store/leaderboard/leaderboard.effects';
 import { appealsFeature } from './store/appeals/appeals.feature';
 import { AppealsEffects } from './store/appeals/appeals.effects';
+import { notificationsFeature } from './store/notifications/notifications.feature';
+import { NotificationsEffects } from './store/notifications/notifications.effects';
+import { recordsFeature } from './store/records/records.feature';
+import { RecordsEffects } from './store/records/records.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -33,6 +37,8 @@ export const appConfig: ApplicationConfig = {
     provideState(usersFeature),
     provideState(leaderboardFeature),
     provideState(appealsFeature),
+    provideState(notificationsFeature),
+    provideState(recordsFeature),
     provideEffects(
       AuthEffects,
       GamesEffects,
@@ -41,6 +47,8 @@ export const appConfig: ApplicationConfig = {
       UsersEffects,
       LeaderboardEffects,
       AppealsEffects,
+      NotificationsEffects,
+      RecordsEffects,
     ),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
   ],

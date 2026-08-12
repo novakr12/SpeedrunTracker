@@ -21,5 +21,13 @@ export const GamesActions = createActionGroup({
     'Delete Success': props<{ id: string }>(),
     'Delete Failure': props<{ error: string }>(),
     'Set Search': props<{ search: string }>(),
+    'Set Followed Only': props<{ followedOnly: boolean }>(),
+    'Load Followed': emptyProps(),
+    'Load Followed Success': props<{ games: Game[] }>(),
+    'Load Followed Failure': props<{ error: string }>(),
+    Follow: props<{ id: string }>(),
+    Unfollow: props<{ id: string }>(),
+    'Follow Success': props<{ games: Game[] }>(),
+    'Follow Failure': props<{ error: string }>(),
   },
 });

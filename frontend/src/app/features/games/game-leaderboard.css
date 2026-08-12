@@ -299,3 +299,108 @@ button.verified-by:hover {
 .error {
   color: #f87171;
 }
+
+.btn.follow.following {
+  border-color: rgba(108, 92, 231, 0.6);
+  background: rgba(108, 92, 231, 0.18);
+  color: #b8aeff;
+}
+
+.wr {
+  margin-left: 0.35rem;
+  padding: 0.05rem 0.35rem;
+  border-radius: 999px;
+  background: rgba(250, 204, 21, 0.18);
+  border: 1px solid rgba(250, 204, 21, 0.45);
+  color: #facc15;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  vertical-align: middle;
+}
+
+.splits-toggle {
+  margin-left: 0.5rem;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #6b7280;
+  font: inherit;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+.splits-toggle:hover {
+  color: var(--accent);
+}
+
+.splits-row > td {
+  padding: 0;
+  background: rgba(148, 163, 184, 0.05);
+}
+
+table.splits {
+  width: 100%;
+  margin: 0;
+}
+
+table.splits td {
+  border-bottom: 1px solid rgba(38, 43, 54, 0.6);
+  font-size: 0.82rem;
+}
+
+.split-name {
+  padding-left: 2rem;
+  color: #aab2c0;
+}
+
+.split-delta .best {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.split-delta .behind {
+  color: #fbbf24;
+  font-variant-numeric: tabular-nums;
+}
+
+.segment-bests {
+  margin-top: 2rem;
+}
+
+.segment-bests h2 {
+  margin: 0 0 0.3rem;
+  font-size: 1rem;
+}
+
+.segment-bests .muted {
+  margin: 0 0 0.8rem;
+  font-size: 0.82rem;
+}
+
+.sum-of-best {
+  margin: 0.9rem 0 0;
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.sum-of-best strong {
+  color: #22c55e;
+}
+
+.cat-block {
+  margin-bottom: 0.9rem;
+}
+
+.segments-input {
+  width: 100%;
+  margin-top: 0.4rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #2c3340;
+  background: #0f1117;
+  color: #e6e6e6;
+  font-size: 0.82rem;
+}

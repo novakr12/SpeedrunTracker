@@ -118,3 +118,13 @@ header h1 {
 .muted {
   color: #6b7280;
 }
+
+.followed-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  color: #aab2c0;
+  white-space: nowrap;
+  cursor: pointer;
+}
