@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -9,6 +10,8 @@ import { Run } from './run.entity';
 import { CategorySegment } from '../categories/category-segment.entity';
 
 @Entity('run_segments')
+@Index(['runId'])
+@Index(['segmentId'])
 export class RunSegment {
   @PrimaryGeneratedColumn('uuid')
   id: string;

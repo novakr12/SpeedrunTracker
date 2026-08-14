@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -15,6 +16,9 @@ import { RunSegment } from './run-segment.entity';
 export type RunStatus = 'pending' | 'accepted' | 'rejected';
 
 @Entity('runs')
+@Index(['gameId', 'status', 'timeMs'])
+@Index(['categoryId', 'status', 'timeMs'])
+@Index(['userId', 'status'])
 export class Run {
   @PrimaryGeneratedColumn('uuid')
   id: string;
