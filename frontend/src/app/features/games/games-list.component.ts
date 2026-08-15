@@ -1,4 +1,11 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import {
   FormBuilder,
@@ -27,6 +34,7 @@ import { selectIsAdmin } from '../../store/auth/auth.feature';
 @Component({
   selector: 'app-games-list',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AsyncPipe, ReactiveFormsModule, GameCardComponent],
   template: `
     <section class="page">
@@ -145,6 +153,7 @@ export class GamesListComponent implements OnInit, OnDestroy {
   private readonly store = inject(Store);
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroy$ = new Subject<void>();
 
   readonly games$ = this.store.select(selectFilteredGames);
@@ -183,7 +192,10 @@ export class GamesListComponent implements OnInit, OnDestroy {
     this.store
       .select(selectFollowedGameIds)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((ids) => (this.followedIds = ids));
+      .subscribe((ids) => {
+        this.followedIds = ids;
+        this.cdr.markForCheck();
+      });
 
     this.search.valueChanges
       .pipe(debounceTime(250), distinctUntilChanged(), takeUntil(this.destroy$))
@@ -194,7 +206,10 @@ export class GamesListComponent implements OnInit, OnDestroy {
     this.store
       .select(selectCategoriesByGame)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((grouped) => (this.categoriesByGame = grouped));
+      .subscribe((grouped) => {
+        this.categoriesByGame = grouped;
+        this.cdr.markForCheck();
+      });
   }
 
   onOpen(game: Game): void {

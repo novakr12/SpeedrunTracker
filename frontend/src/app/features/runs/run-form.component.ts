@@ -1,4 +1,11 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import {
   FormArray,
@@ -20,6 +27,7 @@ import { selectRunsError } from '../../store/runs/runs.feature';
 @Component({
   selector: 'app-run-form',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AsyncPipe, ReactiveFormsModule, MsToTimePipe],
   template: `
     <section class="page">
@@ -120,6 +128,7 @@ export class RunFormComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly gamesService = inject(GamesService);
   private readonly route = inject(ActivatedRoute);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroy$ = new Subject<void>();
 
   readonly games$ = this.store.select(selectAllGames);
@@ -171,15 +180,22 @@ export class RunFormComponent implements OnInit, OnDestroy {
       .subscribe((categories) => {
         this.categories = categories;
         this.form.controls.categoryId.setValue('');
+        this.cdr.markForCheck();
       });
 
     this.form.controls.categoryId.valueChanges
       .pipe(takeUntil(this.destroy$))
-      .subscribe((categoryId) => this.rebuildSegments(categoryId));
+      .subscribe((categoryId) => {
+        this.rebuildSegments(categoryId);
+        this.cdr.markForCheck();
+      });
 
     this.form.valueChanges
       .pipe(startWith(null), takeUntil(this.destroy$))
-      .subscribe(() => this.recalculateTotals());
+      .subscribe(() => {
+        this.recalculateTotals();
+        this.cdr.markForCheck();
+      });
 
     const preselectedGame = this.route.snapshot.queryParamMap.get('gameId');
     if (preselectedGame) {

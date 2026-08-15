@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+} from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { MsToTimePipe } from '../../shared/ms-to-time.pipe';
 import { Run, RunStatus } from '../../core/models/run.model';
@@ -6,6 +12,7 @@ import { Run, RunStatus } from '../../core/models/run.model';
 @Component({
   selector: 'tr[app-run-row]',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [DatePipe, MsToTimePipe],
   template: `
     <td>{{ run.game?.title || '—' }}</td>

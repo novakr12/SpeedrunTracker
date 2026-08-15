@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+} from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { MsToTimePipe } from '../../shared/ms-to-time.pipe';
 import { ProgressSeries } from '../../shared/progress.util';
@@ -21,6 +27,7 @@ interface PlottedPoint {
 @Component({
   selector: 'app-progress-chart',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [DatePipe, MsToTimePipe],
   template: `
     <figure class="chart">

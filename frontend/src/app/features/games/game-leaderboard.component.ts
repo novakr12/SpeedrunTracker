@@ -1,4 +1,6 @@
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   HostListener,
   OnDestroy,
@@ -41,6 +43,7 @@ interface SplitRow {
 @Component({
   selector: 'app-game-leaderboard',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AsyncPipe, DatePipe, FormsModule, RouterLink, MsToTimePipe],
   template: `
     <section class="page">
@@ -370,6 +373,7 @@ interface SplitRow {
 export class GameLeaderboardComponent implements OnInit, OnDestroy {
   private readonly store = inject(Store);
   private readonly route = inject(ActivatedRoute);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroy$ = new Subject<void>();
   private readonly selectedCategoryId$ = new BehaviorSubject<string | null>(
     null,
@@ -426,12 +430,14 @@ export class GameLeaderboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(([games, id]) => {
         this.game = games.find((g) => g.id === id) ?? null;
+        this.cdr.markForCheck();
       });
 
     combineLatest([this.store.select(selectFollowedGameIds), this.gameId$])
       .pipe(takeUntil(this.destroy$))
       .subscribe(([followedIds, id]) => {
         this.isFollowing = !!id && followedIds.includes(id);
+        this.cdr.markForCheck();
       });
 
     combineLatest([this.store.select(selectCategoriesByGame), this.gameId$])
@@ -441,6 +447,7 @@ export class GameLeaderboardComponent implements OnInit, OnDestroy {
         if (this.editing) {
           this.syncCategoryNames();
         }
+        this.cdr.markForCheck();
       });
   }
 

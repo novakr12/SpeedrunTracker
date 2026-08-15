@@ -1,9 +1,16 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+} from '@angular/core';
 import { Category, Game } from '../../core/models/game.model';
 
 @Component({
   selector: 'app-game-card',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <article
       class="card"

@@ -1,4 +1,11 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -13,6 +20,7 @@ import {
 @Component({
   selector: 'app-runs-list',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AsyncPipe, RouterLink, RunRowComponent],
   template: `
     <section class="page">
@@ -61,6 +69,7 @@ import {
 })
 export class RunsListComponent implements OnInit, OnDestroy {
   private readonly store = inject(Store);
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroy$ = new Subject<void>();
 
   readonly runs$ = this.store.select(selectAllRuns);
@@ -78,7 +87,10 @@ export class RunsListComponent implements OnInit, OnDestroy {
       ),
     )
       .pipe(takeUntil(this.destroy$))
-      .subscribe(() => (this.openRunId = null));
+      .subscribe(() => {
+        this.openRunId = null;
+        this.cdr.markForCheck();
+      });
   }
 
   ngOnDestroy(): void {

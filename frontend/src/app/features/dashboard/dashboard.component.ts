@@ -1,4 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { map, zip } from 'rxjs';
@@ -12,6 +18,7 @@ import { selectAuthUser } from '../../store/auth/auth.feature';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AsyncPipe, MsToTimePipe],
   template: `
     <section class="page">
@@ -70,6 +77,7 @@ export class DashboardComponent implements OnInit {
   private readonly gamesService = inject(GamesService);
   private readonly runsService = inject(RunsService);
   private readonly statsService = inject(StatsService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   readonly user$ = this.store.select(selectAuthUser);
 
@@ -84,6 +92,7 @@ export class DashboardComponent implements OnInit {
     this.statsService
       .loadSummary()
       .then((summary) => (this.summary = summary))
-      .catch(() => (this.summary = null));
+      .catch(() => (this.summary = null))
+      .finally(() => this.cdr.markForCheck());
   }
 }

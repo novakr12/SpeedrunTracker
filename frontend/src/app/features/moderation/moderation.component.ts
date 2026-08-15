@@ -1,4 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -20,6 +25,7 @@ type ModerationTab = 'runs' | 'appeals' | 'banned';
 @Component({
   selector: 'app-moderation',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AsyncPipe, DatePipe, FormsModule, MsToTimePipe],
   template: `
     <section class="page">
