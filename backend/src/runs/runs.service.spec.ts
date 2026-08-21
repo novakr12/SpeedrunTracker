@@ -211,6 +211,17 @@ describe('RunsService', () => {
       ]);
     });
 
+    it('asks the database only for accepted runs of this game, sorted by time', async () => {
+      await service.leaderboardForGame(GAME_ID);
+
+      expect(repository.find).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { gameId: GAME_ID, status: 'accepted' },
+          order: { timeMs: 'ASC' },
+        }),
+      );
+    });
+
     it('ranks runs by time and gives tied runs the same rank', async () => {
       repository.find.mockResolvedValue([
         makeRun({ id: 'a', userId: 'u1', timeMs: 100 }),
@@ -229,8 +240,8 @@ describe('RunsService', () => {
     it('keeps only the best run per runner', async () => {
       repository.find.mockResolvedValue([
         makeRun({ id: 'fast', userId: 'u1', timeMs: 100 }),
-        makeRun({ id: 'slow', userId: 'u1', timeMs: 500 }),
         makeRun({ id: 'other', userId: 'u2', timeMs: 300 }),
+        makeRun({ id: 'slow', userId: 'u1', timeMs: 500 }),
       ]);
 
       const board = await service.leaderboardForGame(GAME_ID);
@@ -311,6 +322,33 @@ describe('RunsService', () => {
   });
 
   describe('personalBests', () => {
+    it('asks the database only for the runner own accepted runs, sorted by time', async () => {
+      repository.find.mockResolvedValueOnce([]);
+
+      await service.personalBests('user-1');
+
+      expect(repository.find).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { userId: 'user-1', status: 'accepted' },
+          order: { timeMs: 'ASC' },
+        }),
+      );
+    });
+
+    it('looks for world records only in categories the runner has run', async () => {
+      repository.find
+        .mockResolvedValueOnce([
+          makeRun({ id: 'mine', timeMs: 200, categoryId: 'c1' }),
+        ])
+        .mockResolvedValueOnce([]);
+
+      await service.personalBests('user-1');
+
+      const [, secondCall] = repository.find.mock.calls;
+      expect(secondCall[0].where.status).toBe('accepted');
+      expect(secondCall[0].where.categoryId.value).toEqual(['c1']);
+    });
+
     it('returns nothing when the runner has no accepted runs', async () => {
       repository.find.mockResolvedValueOnce([]);
 
