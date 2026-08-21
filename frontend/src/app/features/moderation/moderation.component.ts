@@ -170,8 +170,8 @@ type ModerationTab = 'runs' | 'appeals' | 'banned';
 
                     <dt>Duration</dt>
                     <dd>
-                      @if (row.appeal.user?.bannedUntil) {
-                        Until {{ row.appeal.user?.bannedUntil | date: 'medium' }}
+                      @if (row.appeal.user?.bannedUntil; as bannedUntil) {
+                        Until {{ bannedUntil | date: 'medium' }}
                       } @else {
                         Permanent
                       }
