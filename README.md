@@ -4,6 +4,19 @@ Praćenje speedrun pokušaja po igrama i kategorijama, sa moderacijom runova i l
 
 Angular + NgRx, NestJS + TypeORM, PostgreSQL u Docker-u.
 
+## Funkcionalnosti:
+
+- Registracija i prijava preko JWT-a, uloge korisnik i admin
+- Igre sa platformama i tagovima, pretraga po naslovu, tagu ili platformi
+- Kategorije sa splitovima koje definiše admin
+- Prijava runa sa razradom po splitovima; zbir splitova mora da odgovara ukupnom vremenu
+- Moderacija runova: prihvatanje ili odbijanje uz komentar, sa upisom ko je odlučio
+- Rang-lista po kategoriji sa oznakom svetskog rekorda i deljenim mestima za ista vremena
+- Najbolje vreme po svakom splitu i zbir najboljih segmenata
+- Lični rekordi i grafik napretka kroz vreme na profilu
+- Praćenje igara i filter na samo praćene
+- Privremeni i trajni ban sa žalbom koju admin rešava
+
 ## Pokretanje:
 
 ```bash
