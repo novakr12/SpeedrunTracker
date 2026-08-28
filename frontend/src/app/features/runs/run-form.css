@@ -14,16 +14,16 @@ label {
   flex-direction: column;
   gap: 0.35rem;
   font-size: 0.85rem;
-  color: #aab2c0;
+  color: var(--muted);
 }
 
 select,
 input {
   padding: 0.55rem 0.7rem;
   border-radius: 8px;
-  border: 1px solid #2c3340;
-  background: #0f1117;
-  color: #e6e6e6;
+  border: 1px solid var(--line-strong);
+  background: var(--bg);
+  color: var(--fg);
   font-size: 0.95rem;
 }
 
@@ -41,7 +41,7 @@ button {
   border: none;
   border-radius: 8px;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   font-weight: 600;
   cursor: pointer;
 }
@@ -53,27 +53,27 @@ button:disabled {
 
 .error {
   margin: 0;
-  color: #ff6b6b;
+  color: var(--bad);
   font-size: 0.85rem;
 }
 
 .segments {
   margin: 0;
   padding: 0.9rem 1rem 1rem;
-  border: 1px solid #2c3340;
+  border: 1px solid var(--line-strong);
   border-radius: 10px;
 }
 
 .segments legend {
   padding: 0 0.4rem;
   font-size: 0.85rem;
-  color: #aab2c0;
+  color: var(--muted);
 }
 
 .muted {
   margin: 0 0 0.8rem;
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--dim);
 }
 
 .segment-row {
@@ -87,7 +87,7 @@ button:disabled {
 .segment-name {
   padding-bottom: 0.55rem;
   font-size: 0.85rem;
-  color: #e6e6e6;
+  color: var(--fg);
   overflow-wrap: anywhere;
 }
 
@@ -95,11 +95,11 @@ button:disabled {
   margin: 0.9rem 0 0;
   font-size: 0.85rem;
   font-variant-numeric: tabular-nums;
-  color: #22c55e;
+  color: var(--ok);
 }
 
 .segment-total.mismatch {
-  color: #fbbf24;
+  color: var(--bad);
 }
 
 .segment-total .delta {

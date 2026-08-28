@@ -14,7 +14,7 @@
   height: 64px;
   border-radius: 50%;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -29,7 +29,7 @@
 .email {
   margin: 0.2rem 0;
   font-size: 0.85rem;
-  color: #aab2c0;
+  color: var(--muted);
 }
 
 .role {
@@ -38,15 +38,15 @@
   letter-spacing: 0.05em;
   padding: 0.15rem 0.55rem;
   border-radius: 999px;
-  background: rgba(148, 163, 184, 0.15);
-  color: #94a3b8;
-  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: var(--neutral-soft);
+  color: var(--dim);
+  border: 1px solid var(--neutral-line);
 }
 
 .role.admin {
-  background: rgba(108, 92, 231, 0.15);
+  background: var(--accent-soft);
   color: var(--accent);
-  border-color: rgba(108, 92, 231, 0.45);
+  border-color: var(--accent-line);
 }
 
 .cards {
@@ -56,8 +56,8 @@
 }
 
 .card {
-  background: #171a22;
-  border: 1px solid #262b36;
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: 12px;
   padding: 1.1rem;
   display: flex;
@@ -74,7 +74,7 @@
 
 .label {
   font-size: 0.78rem;
-  color: #aab2c0;
+  color: var(--muted);
 }
 
 h2 {
@@ -94,23 +94,23 @@ h2 {
   justify-content: space-between;
   gap: 1rem;
   padding: 0.7rem 0.2rem;
-  border-bottom: 1px solid #262b36;
+  border-bottom: 1px solid var(--line);
 }
 
 .facts strong {
-  color: #e6e6e6;
+  color: var(--fg);
   text-align: right;
 }
 
 .muted {
-  color: #6b7280;
+  color: var(--dim);
 }
 
 .wr-count {
   margin-left: 0.6rem;
   font-size: 0.75rem;
   font-weight: 500;
-  color: #facc15;
+  color: var(--accent);
 }
 
 table.records {
@@ -123,11 +123,11 @@ table.records th,
 table.records td {
   text-align: left;
   padding: 0.6rem 0.75rem;
-  border-bottom: 1px solid #262b36;
+  border-bottom: 1px solid var(--line);
 }
 
 table.records th {
-  color: #aab2c0;
+  color: var(--muted);
   font-weight: 600;
 }
 
@@ -137,7 +137,7 @@ table.records .time {
 }
 
 table.records a {
-  color: #e6e6e6;
+  color: var(--fg);
 }
 
 table.records a:hover {
@@ -148,9 +148,9 @@ table.records a:hover {
   margin-left: 0.35rem;
   padding: 0.05rem 0.35rem;
   border-radius: 999px;
-  background: rgba(250, 204, 21, 0.18);
-  border: 1px solid rgba(250, 204, 21, 0.45);
-  color: #facc15;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  color: var(--on-accent);
   font-size: 0.6rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -165,10 +165,10 @@ table.records a:hover {
 
 .followed-game {
   padding: 0.35rem 0.7rem;
-  border: 1px solid #2c3340;
+  border: 1px solid var(--line-strong);
   border-radius: 999px;
-  background: #171a22;
-  color: #e6e6e6;
+  background: var(--surface);
+  color: var(--fg);
   font-size: 0.82rem;
 }
 

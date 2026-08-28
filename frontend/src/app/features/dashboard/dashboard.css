@@ -18,8 +18,8 @@ h2 {
 }
 
 .card {
-  background: #171a22;
-  border: 1px solid #262b36;
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: 12px;
   padding: 1.1rem;
   display: flex;
@@ -36,7 +36,7 @@ h2 {
 
 .label {
   font-size: 0.8rem;
-  color: #aab2c0;
+  color: var(--muted);
 }
 
 .ranking {
@@ -50,7 +50,7 @@ h2 {
   display: flex;
   justify-content: space-between;
   padding: 0.55rem 0.2rem;
-  border-bottom: 1px solid #262b36;
+  border-bottom: 1px solid var(--line);
 }
 
 .count {
@@ -61,9 +61,9 @@ h2 {
 .summary {
   margin-top: 1.5rem;
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--dim);
 }
 
 .muted {
-  color: #6b7280;
+  color: var(--dim);
 }

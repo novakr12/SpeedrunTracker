@@ -1,10 +1,10 @@
 .auth {
   max-width: 360px;
   margin: 3rem auto;
-  background: #171a22;
+  background: var(--surface);
   padding: 1.75rem;
   border-radius: 12px;
-  border: 1px solid #262b36;
+  border: 1px solid var(--line);
 }
 
 .auth h2 {
@@ -22,15 +22,15 @@ label {
   flex-direction: column;
   gap: 0.35rem;
   font-size: 0.85rem;
-  color: #aab2c0;
+  color: var(--muted);
 }
 
 input {
   padding: 0.6rem 0.7rem;
   border-radius: 8px;
-  border: 1px solid #2c3340;
-  background: #0f1117;
-  color: #e6e6e6;
+  border: 1px solid var(--line-strong);
+  background: var(--bg);
+  color: var(--fg);
   font-size: 0.95rem;
 }
 
@@ -45,7 +45,7 @@ button {
   border: none;
   border-radius: 8px;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   font-weight: 600;
   cursor: pointer;
 }
@@ -57,14 +57,14 @@ button:disabled {
 
 .error {
   margin: 0;
-  color: #ff6b6b;
+  color: var(--bad);
   font-size: 0.85rem;
 }
 
 .switch {
   margin-top: 1.1rem;
   font-size: 0.85rem;
-  color: #aab2c0;
+  color: var(--muted);
 }
 
 .switch a {

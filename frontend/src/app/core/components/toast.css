@@ -14,11 +14,11 @@
   align-items: flex-start;
   gap: 0.75rem;
   padding: 0.8rem 0.9rem;
-  background: #2a1d21;
-  border: 1px solid rgba(248, 113, 113, 0.45);
+  background: var(--surface-2);
+  border: 1px solid var(--bad-line);
   border-left-width: 3px;
   border-radius: 10px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
 }
 
 .toast p {
@@ -26,7 +26,7 @@
   flex: 1;
   font-size: 0.85rem;
   line-height: 1.35;
-  color: #fecaca;
+  color: var(--fg);
   overflow-wrap: anywhere;
 }
 
@@ -34,7 +34,7 @@
   padding: 0;
   border: none;
   background: none;
-  color: #f87171;
+  color: var(--bad);
   font: inherit;
   font-size: 1.1rem;
   line-height: 1;
@@ -42,5 +42,5 @@
 }
 
 .toast button:hover {
-  color: #fecaca;
+  color: var(--fg);
 }

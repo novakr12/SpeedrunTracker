@@ -1,8 +1,8 @@
 .chart {
   margin: 0 0 1.5rem;
   padding: 1rem 1.1rem 0.9rem;
-  background: #171a22;
-  border: 1px solid #262b36;
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: 12px;
 }
 
@@ -22,16 +22,16 @@ figcaption {
 
 .meta {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--dim);
   font-variant-numeric: tabular-nums;
 }
 
 .meta strong {
-  color: #e6e6e6;
+  color: var(--fg);
 }
 
 .meta .gain {
-  color: #22c55e;
+  color: var(--ok);
 }
 
 svg {
@@ -42,7 +42,7 @@ svg {
 }
 
 .axis {
-  stroke: #262b36;
+  stroke: var(--line);
   stroke-width: 1;
 }
 
@@ -55,19 +55,19 @@ svg {
 }
 
 .point {
-  fill: #171a22;
+  fill: var(--surface);
   stroke: var(--accent);
   stroke-width: 2;
   cursor: pointer;
 }
 
 .point.record {
-  fill: #22c55e;
-  stroke: #22c55e;
+  fill: var(--ok);
+  stroke: var(--ok);
 }
 
 .point:hover {
-  stroke: #fff;
+  stroke: var(--fg);
 }
 
 .scale {
@@ -75,6 +75,6 @@ svg {
   justify-content: space-between;
   margin-top: 0.35rem;
   font-size: 0.72rem;
-  color: #6b7280;
+  color: var(--dim);
   font-variant-numeric: tabular-nums;
 }

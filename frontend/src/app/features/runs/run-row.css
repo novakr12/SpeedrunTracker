@@ -1,7 +1,7 @@
 td {
   text-align: left;
   padding: 0.65rem 0.75rem;
-  border-bottom: 1px solid #262b36;
+  border-bottom: 1px solid var(--line);
 }
 
 .time {
@@ -15,10 +15,10 @@ td {
 
 .status-badge {
   padding: 0.15rem 0.55rem;
-  border: 1px solid rgba(148, 163, 184, 0.35);
+  border: 1px solid var(--neutral-line);
   border-radius: 999px;
-  background: rgba(148, 163, 184, 0.15);
-  color: #94a3b8;
+  background: var(--neutral-soft);
+  color: var(--dim);
   font: inherit;
   font-size: 0.7rem;
   text-transform: uppercase;
@@ -30,15 +30,15 @@ button.status-badge {
 }
 
 .status-badge.accepted {
-  border-color: rgba(34, 197, 94, 0.35);
-  background: rgba(34, 197, 94, 0.15);
-  color: #22c55e;
+  border-color: var(--ok-line);
+  background: var(--ok-soft);
+  color: var(--ok);
 }
 
 .status-badge.rejected {
-  border-color: rgba(248, 113, 113, 0.35);
-  background: rgba(248, 113, 113, 0.15);
-  color: #f87171;
+  border-color: var(--bad-line);
+  background: var(--bad-soft);
+  color: var(--bad);
 }
 
 button.status-badge:hover {
@@ -52,10 +52,10 @@ button.status-badge:hover {
   z-index: 20;
   width: 260px;
   padding: 0.85rem 1rem;
-  background: #1c202a;
-  border: 1px solid #2c3340;
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
   border-radius: 10px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
   text-align: left;
   cursor: default;
 }
@@ -63,7 +63,7 @@ button.status-badge:hover {
 .review-popover .label {
   margin: 0.6rem 0 0.15rem;
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--dim);
 }
 
 .review-popover .label:first-child {
@@ -73,11 +73,11 @@ button.status-badge:hover {
 .review-popover .value {
   margin: 0;
   font-size: 0.85rem;
-  color: #e6e6e6;
+  color: var(--fg);
   overflow-wrap: anywhere;
 }
 
 .review-popover .quote {
   font-style: italic;
-  color: #aab2c0;
+  color: var(--muted);
 }
