@@ -7,7 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -106,6 +106,8 @@ export class UsersService {
       }
     }
 
+    await this.assertAvailable(id, changes.email, changes.username);
+
     const patch: Partial<User> = { ...changes };
     if (changes.password) {
       patch.password = await bcrypt.hash(changes.password, 10);
@@ -115,6 +117,23 @@ export class UsersService {
       throw new NotFoundException(`User ${id} not found`);
     }
     return this.usersRepository.save(user);
+  }
+
+  private async assertAvailable(
+    id: string,
+    email?: string,
+    username?: string,
+  ): Promise<void> {
+    const where = [
+      ...(email ? [{ email, id: Not(id) }] : []),
+      ...(username ? [{ username, id: Not(id) }] : []),
+    ];
+    if (!where.length) {
+      return;
+    }
+    if (await this.usersRepository.findOne({ where })) {
+      throw new ConflictException('Email or username already in use');
+    }
   }
 
   isBanned(user: User): boolean {
