@@ -36,7 +36,7 @@ export class Game {
   @OneToMany(() => Run, (run) => run.game)
   runs: Run[];
 
-  @ManyToMany(() => User, (user) => user.followedGames)
+  @ManyToMany(() => User, (user) => user.followedGames, { onDelete: 'CASCADE' })
   followers: User[];
 
   @CreateDateColumn()
