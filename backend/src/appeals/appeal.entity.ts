@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -11,6 +12,9 @@ import { User } from '../users/user.entity';
 export type AppealStatus = 'open' | 'accepted' | 'rejected';
 
 @Entity('ban_appeals')
+@Index('UQ_ban_appeals_userId_banIssuedAt', ['userId', 'banIssuedAt'], {
+  unique: true,
+})
 export class BanAppeal {
   @PrimaryGeneratedColumn('uuid')
   id: string;

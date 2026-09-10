@@ -5,12 +5,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { BanAppeal } from './appeal.entity';
 import { CreateAppealDto } from './dto/create-appeal.dto';
 import { ResolveAppealDto } from './dto/resolve-appeal.dto';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/user.entity';
+
+const UNIQUE_VIOLATION = '23505';
 
 @Injectable()
 export class AppealsService {
@@ -36,7 +38,17 @@ export class AppealsService {
       banIssuedAt: user.bannedAt,
       message: dto.message,
     });
-    return this.appealsRepository.save(appeal);
+    try {
+      return await this.appealsRepository.save(appeal);
+    } catch (error) {
+      if (
+        error instanceof QueryFailedError &&
+        (error.driverError as { code?: string }).code === UNIQUE_VIOLATION
+      ) {
+        throw new ConflictException('You have already appealed this ban');
+      }
+      throw error;
+    }
   }
 
   findForCurrentBan(user: User): Promise<BanAppeal | null> {
