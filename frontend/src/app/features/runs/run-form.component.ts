@@ -110,6 +110,11 @@ import { selectRunsError } from '../../store/runs/runs.feature';
           Video URL (optional)
           <input type="url" formControlName="videoUrl" />
         </label>
+        @if (form.controls.videoUrl.invalid) {
+          <p class="error">
+            Must start with http:// or https:// — leave empty for no video.
+          </p>
+        }
 
         @if (error$ | async; as error) {
           <p class="error">{{ error }}</p>
@@ -144,7 +149,7 @@ export class RunFormComponent implements OnInit, OnDestroy {
     categoryId: ['', [Validators.required]],
     minutes: [0, [Validators.required, Validators.min(0)]],
     seconds: [0, [Validators.required, Validators.min(0), Validators.max(59)]],
-    videoUrl: [''],
+    videoUrl: ['', [Validators.pattern(/^https?:\/\/\S+$/i)]],
     segments: this.fb.array<
       ReturnType<RunFormComponent['createSegmentGroup']>
     >([]),

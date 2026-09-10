@@ -5,8 +5,9 @@ import {
   IsDateString,
   IsInt,
   IsOptional,
-  IsString,
+  IsUrl,
   IsUUID,
+  MaxLength,
   Min,
   ValidateNested,
 } from 'class-validator';
@@ -32,7 +33,8 @@ export class CreateRunDto {
   timeMs: number;
 
   @IsOptional()
-  @IsString()
+  @IsUrl({ protocols: ['http', 'https'], require_protocol: true })
+  @MaxLength(2048)
   videoUrl?: string;
 
   @IsOptional()
