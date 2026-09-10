@@ -394,6 +394,7 @@ describe('RunsService', () => {
   });
 
   describe('ownership rules', () => {
+    const edit = { videoUrl: 'https://example.com/run' };
     const otherUser: AuthUser = {
       userId: 'someone-else',
       username: 'bob',
@@ -411,7 +412,7 @@ describe('RunsService', () => {
       );
 
       await expect(
-        service.update('run-1', { timeMs: 10 }, otherUser),
+        service.update('run-1', edit, otherUser),
       ).rejects.toBeInstanceOf(ForbiddenException);
     });
 
@@ -423,7 +424,7 @@ describe('RunsService', () => {
       await expect(
         service.update(
           'run-1',
-          { timeMs: 10 },
+          edit,
           { userId: 'user-1', username: 'ada', role: 'user' },
         ),
       ).rejects.toThrow('Only runs still awaiting verification can be edited');
@@ -435,7 +436,7 @@ describe('RunsService', () => {
       );
 
       await expect(
-        service.update('run-1', { timeMs: 10 }, admin),
+        service.update('run-1', edit, admin),
       ).resolves.toBeDefined();
     });
 

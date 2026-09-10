@@ -51,7 +51,7 @@ export class RunsController {
     return this.runsService.findOne(id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, BanGuard)
   @Patch(':id')
   update(
     @CurrentUser() user: AuthUser,

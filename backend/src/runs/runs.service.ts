@@ -210,13 +210,6 @@ export class RunsService {
       );
     }
 
-    if (dto.gameId || dto.categoryId) {
-      await this.validateReferences(
-        existing.userId,
-        dto.gameId ?? existing.gameId,
-        dto.categoryId ?? existing.categoryId,
-      );
-    }
     const run = await this.runsRepository.preload({
       id,
       ...dto,
