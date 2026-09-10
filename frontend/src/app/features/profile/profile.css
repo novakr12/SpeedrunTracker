@@ -37,7 +37,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding: 0.15rem 0.55rem;
-  border-radius: 999px;
+  border-radius: var(--radius);
   background: var(--neutral-soft);
   color: var(--dim);
   border: 1px solid var(--neutral-line);
@@ -58,7 +58,7 @@
 .card {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--radius);
   padding: 1.1rem;
   display: flex;
   flex-direction: column;
@@ -147,7 +147,7 @@ table.records a:hover {
 .wr {
   margin-left: 0.35rem;
   padding: 0.05rem 0.35rem;
-  border-radius: 999px;
+  border-radius: var(--radius);
   background: var(--accent);
   border: 1px solid var(--accent);
   color: var(--on-accent);
@@ -166,7 +166,7 @@ table.records a:hover {
 .followed-game {
   padding: 0.35rem 0.7rem;
   border: 1px solid var(--line-strong);
-  border-radius: 999px;
+  border-radius: var(--radius);
   background: var(--surface);
   color: var(--fg);
   font-size: 0.82rem;

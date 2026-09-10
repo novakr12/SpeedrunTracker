@@ -15,7 +15,7 @@ header h1 {
 
 .btn {
   padding: 0.5rem 1rem;
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: var(--accent);
   color: var(--on-accent);
   font-weight: 600;

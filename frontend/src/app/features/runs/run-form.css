@@ -20,7 +20,7 @@ label {
 select,
 input {
   padding: 0.55rem 0.7rem;
-  border-radius: 8px;
+  border-radius: var(--radius);
   border: 1px solid var(--line-strong);
   background: var(--bg);
   color: var(--fg);
@@ -39,7 +39,7 @@ input {
 button {
   padding: 0.65rem;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: var(--accent);
   color: var(--on-accent);
   font-weight: 600;
@@ -61,7 +61,7 @@ button:disabled {
   margin: 0;
   padding: 0.9rem 1rem 1rem;
   border: 1px solid var(--line-strong);
-  border-radius: 10px;
+  border-radius: var(--radius);
 }
 
 .segments legend {

@@ -45,7 +45,7 @@ nav a.active {
 button {
   padding: 0.4rem 0.8rem;
   border: 1px solid var(--line-strong);
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: transparent;
   color: var(--fg);
   cursor: pointer;
@@ -64,7 +64,7 @@ button:hover {
 button.banned-badge {
   padding: 0.15rem 0.55rem;
   border: 1px solid var(--bad-line);
-  border-radius: 999px;
+  border-radius: var(--radius);
   background: var(--bad-soft);
   color: var(--bad);
   font: inherit;
@@ -86,7 +86,7 @@ button.banned-badge:hover {
   padding: 0.85rem 1rem;
   background: var(--surface-2);
   border: 1px solid var(--line-strong);
-  border-radius: 10px;
+  border-radius: var(--radius);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
   text-align: left;
   cursor: default;
@@ -149,7 +149,7 @@ button.banned-badge:hover {
   margin-top: 0.15rem;
   padding: 0.5rem 0.6rem;
   border: 1px solid var(--line-strong);
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: var(--bg);
   color: var(--fg);
   font: inherit;

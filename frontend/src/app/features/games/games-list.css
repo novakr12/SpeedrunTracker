@@ -16,7 +16,7 @@ header h1 {
 
 .search {
   padding: 0.55rem 0.8rem;
-  border-radius: 8px;
+  border-radius: var(--radius);
   border: 1px solid var(--line-strong);
   background: var(--bg);
   color: var(--fg);
@@ -37,7 +37,7 @@ header h1 {
   padding: 1rem;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--radius);
 }
 
 .add-game .row {
@@ -65,7 +65,7 @@ header h1 {
 .add select,
 .add-game input {
   padding: 0.5rem 0.7rem;
-  border-radius: 8px;
+  border-radius: var(--radius);
   border: 1px solid var(--line-strong);
   background: var(--bg);
   color: var(--fg);
@@ -86,7 +86,7 @@ header h1 {
   margin: 0 0 1rem;
   padding: 0.6rem 0.85rem;
   border: 1px solid var(--bad-line);
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: var(--bad-line);
   font-size: 0.85rem;
   color: var(--bad);
@@ -96,7 +96,7 @@ header h1 {
 .add-game button {
   padding: 0.5rem 1rem;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: var(--accent);
   color: var(--on-accent);
   font-weight: 600;

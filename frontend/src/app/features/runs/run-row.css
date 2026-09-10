@@ -16,7 +16,7 @@ td {
 .status-badge {
   padding: 0.15rem 0.55rem;
   border: 1px solid var(--neutral-line);
-  border-radius: 999px;
+  border-radius: var(--radius);
   background: var(--neutral-soft);
   color: var(--dim);
   font: inherit;
@@ -54,7 +54,7 @@ button.status-badge:hover {
   padding: 0.85rem 1rem;
   background: var(--surface-2);
   border: 1px solid var(--line-strong);
-  border-radius: 10px;
+  border-radius: var(--radius);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
   text-align: left;
   cursor: default;

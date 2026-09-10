@@ -6,7 +6,7 @@
 .card {
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: var(--radius);
   padding: 1rem;
   transition: border-color 0.15s ease, transform 0.15s ease;
   display: flex;
@@ -30,7 +30,7 @@
 .cover {
   position: relative;
   aspect-ratio: 16 / 9;
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: var(--bg);
   display: flex;
   align-items: center;
@@ -79,7 +79,7 @@
 .chip {
   font-size: 0.72rem;
   padding: 0.15rem 0.5rem;
-  border-radius: 999px;
+  border-radius: var(--radius);
   overflow-wrap: anywhere;
   background: var(--accent-soft);
   color: var(--accent);
@@ -118,7 +118,7 @@
   min-width: 0;
   padding: 0.4rem 1.6rem;
   border: 1px solid var(--line-strong);
-  border-radius: 8px;
+  border-radius: var(--radius);
   background: transparent;
   color: var(--fg);
   cursor: pointer;
@@ -159,7 +159,7 @@
   width: 100%;
   min-width: 0;
   padding: 0.45rem 0.6rem;
-  border-radius: 8px;
+  border-radius: var(--radius);
   border: 1px solid var(--line-strong);
   background: var(--bg);
   color: var(--fg);
@@ -187,7 +187,7 @@
   min-width: 0;
   width: 100%;
   padding: 0.35rem 0.5rem;
-  border-radius: 8px;
+  border-radius: var(--radius);
   border: 1px solid var(--line-strong);
   background: var(--bg);
   color: var(--fg);
