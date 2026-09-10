@@ -8,7 +8,7 @@
     "frontend"
   ],
   "scripts": {
-    "db:up": "docker compose up -d",
+    "db:up": "docker compose up -d --wait",
     "db:down": "docker compose down",
     "backend": "npm run start:dev --workspace backend",
     "frontend": "npm start --workspace frontend",
