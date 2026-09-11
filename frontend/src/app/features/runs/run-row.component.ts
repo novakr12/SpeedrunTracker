@@ -18,7 +18,7 @@ import { Run, RunStatus } from '../../core/models/run.model';
     <td>{{ run.game?.title || '—' }}</td>
     <td>{{ run.category?.name || '—' }}</td>
     <td>{{ run.user?.username || '—' }}</td>
-    <td class="time">{{ run.timeMs | msToTime }}</td>
+    <td class="time">{{ run.timeMs | msToTime: 'milliseconds' }}</td>
     <td class="status-cell">
       @if (run.status === 'pending') {
         <span class="status-badge pending">Pending</span>

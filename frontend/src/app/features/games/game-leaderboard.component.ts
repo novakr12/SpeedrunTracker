@@ -207,7 +207,7 @@ interface SplitRow {
                     </td>
                     <td>{{ entry.username }}</td>
                     <td class="time">
-                      {{ entry.timeMs | msToTime }}
+                      {{ entry.timeMs | msToTime: 'milliseconds' }}
                       @if (entry.segments.length) {
                         <button
                           type="button"
@@ -287,7 +287,7 @@ interface SplitRow {
                               <tr>
                                 <td class="split-name">{{ split.name }}</td>
                                 <td class="time">
-                                  {{ split.durationMs | msToTime }}
+                                  {{ split.durationMs | msToTime: 'milliseconds' }}
                                 </td>
                                 <td class="split-delta">
                                   @if (split.deltaMs === null) {
@@ -335,7 +335,7 @@ interface SplitRow {
                       <td>{{ best.segmentName }}</td>
                       <td class="time">
                         @if (best.durationMs !== null) {
-                          {{ best.durationMs | msToTime }}
+                          {{ best.durationMs | msToTime: 'milliseconds' }}
                         } @else {
                           <span class="muted">—</span>
                         }
@@ -351,7 +351,7 @@ interface SplitRow {
               @if (category.sumOfBestMs !== null) {
                 <p class="sum-of-best">
                   Sum of best segments:
-                  <strong>{{ category.sumOfBestMs | msToTime }}</strong>
+                  <strong>{{ category.sumOfBestMs | msToTime: 'milliseconds' }}</strong>
                   @if (bestTimeMs(category); as best) {
                     <span class="muted">
                       — {{ formatDelta(category.sumOfBestMs - best) }} against

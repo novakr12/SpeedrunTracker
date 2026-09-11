@@ -29,4 +29,20 @@ describe('MsToTimePipe', () => {
     expect(pipe.transform(undefined)).toBe('—');
     expect(pipe.transform(-1)).toBe('—');
   });
+
+  it('adds milliseconds when asked for millisecond precision', () => {
+    expect(pipe.transform(83_456, 'milliseconds')).toBe('1:23.456');
+  });
+
+  it('pads milliseconds to three digits', () => {
+    expect(pipe.transform(90_005, 'milliseconds')).toBe('1:30.005');
+  });
+
+  it('adds milliseconds to times past an hour', () => {
+    expect(pipe.transform(3_723_045, 'milliseconds')).toBe('1:02:03.045');
+  });
+
+  it('still returns a dash for missing values at millisecond precision', () => {
+    expect(pipe.transform(null, 'milliseconds')).toBe('—');
+  });
 });

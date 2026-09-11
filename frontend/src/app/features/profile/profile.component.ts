@@ -87,7 +87,7 @@ import { selectFollowedGames } from '../../store/games/games.feature';
             <li>
               <span>Personal best</span>
               <strong>
-                {{ stats.fastestRun.timeMs | msToTime }} —
+                {{ stats.fastestRun.timeMs | msToTime: 'milliseconds' }} —
                 {{ stats.fastestRun.game }} / {{ stats.fastestRun.category }}
               </strong>
             </li>
@@ -128,7 +128,7 @@ import { selectFollowedGames } from '../../store/games/games.feature';
                   </td>
                   <td>{{ best.categoryName }}</td>
                   <td class="time">
-                    {{ best.timeMs | msToTime }}
+                    {{ best.timeMs | msToTime: 'milliseconds' }}
                     @if (best.isWorldRecord) {
                       <span class="wr" title="World record">WR</span>
                     }

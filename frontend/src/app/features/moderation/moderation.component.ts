@@ -78,7 +78,7 @@ type ModerationTab = 'runs' | 'appeals' | 'banned';
                   <h3>{{ run.game?.title }} — {{ run.category?.name }}</h3>
                   <p class="meta">
                     by <strong>{{ run.user?.username }}</strong> ·
-                    <span class="time">{{ run.timeMs | msToTime }}</span>
+                    <span class="time">{{ run.timeMs | msToTime: 'milliseconds' }}</span>
                   </p>
                   @if (run.videoUrl) {
                     <a
@@ -185,7 +185,7 @@ type ModerationTab = 'runs' | 'appeals' | 'banned';
                       @if (row.banRun; as run) {
                         {{ run.game?.title || 'Unknown game' }} /
                         {{ run.category?.name || 'Unknown category' }} —
-                        {{ run.timeMs | msToTime }}
+                        {{ run.timeMs | msToTime: 'milliseconds' }}
                         <span class="run-flag">{{ run.status }}</span>
                         @if (run.videoUrl) {
                           <a
