@@ -34,6 +34,17 @@ input {
 
 .time-row label {
   flex: 1;
+  min-width: 0;
+}
+
+.time-row input,
+.segment-row input {
+  width: 100%;
+  min-width: 0;
+}
+
+input[type='date'] {
+  color-scheme: dark;
 }
 
 button {
@@ -78,7 +89,7 @@ button:disabled {
 
 .segment-row {
   display: grid;
-  grid-template-columns: 1fr 4.5rem 4.5rem;
+  grid-template-columns: 1fr repeat(3, 4.2rem);
   align-items: end;
   gap: 0.6rem;
   margin-bottom: 0.55rem;

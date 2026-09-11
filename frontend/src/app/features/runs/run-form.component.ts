@@ -7,22 +7,24 @@ import {
   inject,
 } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
-import {
-  FormArray,
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { map, of, startWith, Subject, switchMap, takeUntil } from 'rxjs';
 import { Category, CategorySegment } from '../../core/models/game.model';
 import { MsToTimePipe } from '../../shared/ms-to-time.pipe';
+import { durationToMs, positiveDuration } from '../../shared/duration.util';
 import { GamesService } from '../../core/services/games.service';
 import { GamesActions } from '../../store/games/games.actions';
 import { selectAllGames } from '../../store/games/games.feature';
 import { RunsActions } from '../../store/runs/runs.actions';
 import { selectRunsError } from '../../store/runs/runs.feature';
+
+function todayAsIsoDate(): string {
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  return now.toISOString().slice(0, 10);
+}
 
 @Component({
   selector: 'app-run-form',
@@ -54,7 +56,7 @@ import { selectRunsError } from '../../store/runs/runs.feature';
           </select>
         </label>
 
-        <div class="time-row">
+        <div class="time-row" formGroupName="time">
           <label>
             Minutes
             <input type="number" formControlName="minutes" min="0" />
@@ -63,7 +65,19 @@ import { selectRunsError } from '../../store/runs/runs.feature';
             Seconds
             <input type="number" formControlName="seconds" min="0" max="59" />
           </label>
+          <label>
+            Milliseconds
+            <input
+              type="number"
+              formControlName="milliseconds"
+              min="0"
+              max="999"
+            />
+          </label>
         </div>
+        @if (showZeroTimeError) {
+          <p class="error">The total time has to be above zero.</p>
+        }
 
         @if (segmentDefinitions.length) {
           <fieldset class="segments" formArrayName="segments">
@@ -80,31 +94,51 @@ import { selectRunsError } from '../../store/runs/runs.feature';
             ) {
               <div class="segment-row" [formGroupName]="i">
                 <span class="segment-name">{{ segment.name }}</span>
-                <label>
-                  Min
-                  <input type="number" formControlName="minutes" min="0" />
-                </label>
-                <label>
-                  Sec
-                  <input
-                    type="number"
-                    formControlName="seconds"
-                    min="0"
-                    max="59"
-                  />
-                </label>
+                <ng-container formGroupName="time">
+                  <label>
+                    Min
+                    <input type="number" formControlName="minutes" min="0" />
+                  </label>
+                  <label>
+                    Sec
+                    <input
+                      type="number"
+                      formControlName="seconds"
+                      min="0"
+                      max="59"
+                    />
+                  </label>
+                  <label>
+                    Ms
+                    <input
+                      type="number"
+                      formControlName="milliseconds"
+                      min="0"
+                      max="999"
+                    />
+                  </label>
+                </ng-container>
               </div>
             }
 
             <p class="segment-total" [class.mismatch]="!segmentsMatchTotal">
-              Splits add up to {{ segmentTotalMs | msToTime }} of
-              {{ totalMs | msToTime }}
+              Splits add up to
+              {{ segmentTotalMs | msToTime: 'milliseconds' }} of
+              {{ totalMs | msToTime: 'milliseconds' }}
               @if (!segmentsMatchTotal) {
                 <span class="delta">({{ segmentDeltaLabel }})</span>
               }
             </p>
+            @if (showZeroSplitError) {
+              <p class="error">Every split needs a time above zero.</p>
+            }
           </fieldset>
         }
+
+        <label>
+          Played on
+          <input type="date" formControlName="playedAt" [max]="today" />
+        </label>
 
         <label>
           Video URL (optional)
@@ -138,6 +172,7 @@ export class RunFormComponent implements OnInit, OnDestroy {
 
   readonly games$ = this.store.select(selectAllGames);
   readonly error$ = this.store.select(selectRunsError);
+  readonly today = todayAsIsoDate();
 
   categories: Category[] = [];
   segmentDefinitions: CategorySegment[] = [];
@@ -147,16 +182,16 @@ export class RunFormComponent implements OnInit, OnDestroy {
   readonly form = this.fb.nonNullable.group({
     gameId: ['', [Validators.required]],
     categoryId: ['', [Validators.required]],
-    minutes: [0, [Validators.required, Validators.min(0)]],
-    seconds: [0, [Validators.required, Validators.min(0), Validators.max(59)]],
+    time: this.createDurationGroup(),
+    playedAt: [this.today],
     videoUrl: ['', [Validators.pattern(/^https?:\/\/\S+$/i)]],
     segments: this.fb.array<
       ReturnType<RunFormComponent['createSegmentGroup']>
     >([]),
   });
 
-  get segments(): FormArray {
-    return this.form.controls.segments as FormArray;
+  get segments() {
+    return this.form.controls.segments;
   }
 
   get segmentsMatchTotal(): boolean {
@@ -169,6 +204,21 @@ export class RunFormComponent implements OnInit, OnDestroy {
     const delta = this.segmentTotalMs - this.totalMs;
     const seconds = (Math.abs(delta) / 1000).toFixed(3);
     return `${delta > 0 ? '+' : '−'}${seconds}s`;
+  }
+
+  get showZeroTimeError(): boolean {
+    const time = this.form.controls.time;
+    return time.dirty && time.hasError('zeroDuration');
+  }
+
+  get showZeroSplitError(): boolean {
+    return (
+      this.totalMs > 0 &&
+      this.segmentsMatchTotal &&
+      this.segments.controls.some((group) =>
+        group.controls.time.hasError('zeroDuration'),
+      )
+    );
   }
 
   ngOnInit(): void {
@@ -219,11 +269,12 @@ export class RunFormComponent implements OnInit, OnDestroy {
           gameId: value.gameId,
           categoryId: value.categoryId,
           timeMs: this.totalMs,
+          playedAt: value.playedAt || undefined,
           videoUrl: value.videoUrl || undefined,
           segments: this.segmentDefinitions.length
             ? value.segments.map((segment) => ({
                 segmentId: segment.segmentId,
-                durationMs: (segment.minutes * 60 + segment.seconds) * 1000,
+                durationMs: durationToMs(segment.time),
               }))
             : undefined,
         },
@@ -247,22 +298,35 @@ export class RunFormComponent implements OnInit, OnDestroy {
     }
   }
 
+  private createDurationGroup() {
+    return this.fb.nonNullable.group(
+      {
+        minutes: [0, [Validators.required, Validators.min(0)]],
+        seconds: [
+          0,
+          [Validators.required, Validators.min(0), Validators.max(59)],
+        ],
+        milliseconds: [
+          0,
+          [Validators.required, Validators.min(0), Validators.max(999)],
+        ],
+      },
+      { validators: positiveDuration },
+    );
+  }
+
   private createSegmentGroup(segmentId: string) {
     return this.fb.nonNullable.group({
       segmentId: [segmentId],
-      minutes: [0, [Validators.required, Validators.min(0)]],
-      seconds: [
-        0,
-        [Validators.required, Validators.min(0), Validators.max(59)],
-      ],
+      time: this.createDurationGroup(),
     });
   }
 
   private recalculateTotals(): void {
     const value = this.form.getRawValue();
-    this.totalMs = (value.minutes * 60 + value.seconds) * 1000;
+    this.totalMs = durationToMs(value.time);
     this.segmentTotalMs = value.segments.reduce(
-      (sum, segment) => sum + (segment.minutes * 60 + segment.seconds) * 1000,
+      (sum, segment) => sum + durationToMs(segment.time),
       0,
     );
   }
