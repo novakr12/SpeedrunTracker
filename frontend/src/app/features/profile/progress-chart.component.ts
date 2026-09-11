@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { MsToTimePipe } from '../../shared/ms-to-time.pipe';
 import { ProgressSeries } from '../../shared/progress.util';
@@ -35,10 +29,12 @@ interface PlottedPoint {
         <span class="title">{{ series.gameTitle }} — {{ series.categoryName }}</span>
         <span class="meta">
           {{ series.points.length }} runs · best
-          <strong>{{ series.bestMs | msToTime }}</strong>
+          <strong>{{ series.bestMs | msToTime: 'milliseconds' }}</strong>
           @if (series.improvementMs > 0) {
             · improved by
-            <strong class="gain">{{ series.improvementMs | msToTime }}</strong>
+            <strong class="gain">{{
+              series.improvementMs | msToTime: 'milliseconds'
+            }}</strong>
           }
         </span>
       </figcaption>
@@ -69,19 +65,18 @@ interface PlottedPoint {
             [attr.cx]="point.x"
             [attr.cy]="point.y"
             [attr.r]="point.isRecord ? 5 : 3.5"
-            (click)="select.emit(point.runId)"
           >
             <title>
-              {{ point.timeMs | msToTime }}{{ point.at ? ' · ' : ''
-              }}{{ point.at | date: 'mediumDate' }}
+              {{ point.timeMs | msToTime: 'milliseconds'
+              }}{{ point.at ? ' · ' : '' }}{{ point.at | date: 'mediumDate' }}
             </title>
           </circle>
         }
       </svg>
 
       <div class="scale">
-        <span>{{ series.bestMs | msToTime }} fastest</span>
-        <span>{{ series.worstMs | msToTime }} slowest</span>
+        <span>{{ series.bestMs | msToTime: 'milliseconds' }} fastest</span>
+        <span>{{ series.worstMs | msToTime: 'milliseconds' }} slowest</span>
       </div>
     </figure>
   `,
@@ -95,8 +90,6 @@ export class ProgressChartComponent {
   get series(): ProgressSeries {
     return this.current;
   }
-
-  @Output() select = new EventEmitter<string>();
 
   readonly width = WIDTH;
   readonly height = HEIGHT;

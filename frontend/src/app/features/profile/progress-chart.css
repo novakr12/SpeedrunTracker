@@ -58,7 +58,6 @@ svg {
   fill: var(--surface);
   stroke: var(--accent);
   stroke-width: 2;
-  cursor: pointer;
 }
 
 .point.record {
