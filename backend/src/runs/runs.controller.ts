@@ -8,10 +8,12 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { RunsService } from './runs.service';
 import { CreateRunDto } from './dto/create-run.dto';
+import { PaginationQueryDto } from './dto/pagination-query.dto';
 import { UpdateRunDto } from './dto/update-run.dto';
 import { ReviewRunDto } from './dto/review-run.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -33,6 +35,11 @@ export class RunsController {
   @Get()
   findAll() {
     return this.runsService.findAll();
+  }
+
+  @Get('paged')
+  findPage(@Query() query: PaginationQueryDto) {
+    return this.runsService.findPage(query);
   }
 
   @Get('leaderboard/:gameId')

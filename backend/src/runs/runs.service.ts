@@ -10,6 +10,8 @@ import { Run } from './run.entity';
 import { CreateRunDto, RunSegmentDto } from './dto/create-run.dto';
 import { UpdateRunDto } from './dto/update-run.dto';
 import { ReviewRunDto } from './dto/review-run.dto';
+import { PaginationQueryDto } from './dto/pagination-query.dto';
+import { Page } from './dto/page.types';
 import {
   GameLeaderboard,
   LeaderboardEntry,
@@ -20,6 +22,9 @@ import { AuthUser } from '../auth/decorators/current-user.decorator';
 import { UsersService } from '../users/users.service';
 import { GamesService } from '../games/games.service';
 import { CategoriesService } from '../categories/categories.service';
+
+const DEFAULT_PAGE = 1;
+const DEFAULT_PAGE_SIZE = 20;
 
 @Injectable()
 export class RunsService {
@@ -63,6 +68,29 @@ export class RunsService {
       },
       order: { timeMs: 'ASC' },
     });
+  }
+
+  async findPage({
+    page = DEFAULT_PAGE,
+    limit = DEFAULT_PAGE_SIZE,
+  }: PaginationQueryDto): Promise<Page<Run>> {
+    const [items, total] = await this.runsRepository.findAndCount({
+      relations: {
+        user: true,
+        game: true,
+        category: true,
+        reviewedBy: true,
+        segments: true,
+      },
+      select: {
+        user: { id: true, username: true },
+        reviewedBy: { id: true, username: true },
+      },
+      order: { timeMs: 'ASC', id: 'ASC' },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+    return { items, total, page, limit };
   }
 
   async personalBests(userId: string): Promise<PersonalBest[]> {

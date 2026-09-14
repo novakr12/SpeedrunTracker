@@ -24,6 +24,8 @@ import { notificationsFeature } from './store/notifications/notifications.featur
 import { NotificationsEffects } from './store/notifications/notifications.effects';
 import { recordsFeature } from './store/records/records.feature';
 import { RecordsEffects } from './store/records/records.effects';
+import { runsPageFeature } from './store/runs-page/runs-page.feature';
+import { RunsPageEffects } from './store/runs-page/runs-page.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -39,6 +41,7 @@ export const appConfig: ApplicationConfig = {
     provideState(appealsFeature),
     provideState(notificationsFeature),
     provideState(recordsFeature),
+    provideState(runsPageFeature),
     provideEffects(
       AuthEffects,
       GamesEffects,
@@ -49,6 +52,7 @@ export const appConfig: ApplicationConfig = {
       AppealsEffects,
       NotificationsEffects,
       RecordsEffects,
+      RunsPageEffects,
     ),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
   ],

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CreateRunDto, ReviewRunDto, Run } from '../models/run.model';
 import { GameLeaderboard, PersonalBest } from '../models/leaderboard.model';
+import { Page } from '../models/page.model';
 
 @Injectable({ providedIn: 'root' })
 export class RunsService {
@@ -11,6 +12,12 @@ export class RunsService {
 
   getAll(): Observable<Run[]> {
     return this.http.get<Run[]>(this.base);
+  }
+
+  getPage(page: number, limit: number): Observable<Page<Run>> {
+    return this.http.get<Page<Run>>(`${this.base}/paged`, {
+      params: { page, limit },
+    });
   }
 
   getGameLeaderboard(gameId: string): Observable<GameLeaderboard> {

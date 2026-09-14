@@ -42,6 +42,7 @@ describe('RunsService', () => {
   beforeEach(async () => {
     repository = {
       find: jest.fn().mockResolvedValue([]),
+      findAndCount: jest.fn().mockResolvedValue([[], 0]),
       findOne: jest.fn().mockResolvedValue(makeRun()),
       create: jest.fn((value) => value),
       save: jest.fn(async (value) => ({ ...value, id: 'saved-run' })),
@@ -197,6 +198,44 @@ describe('RunsService', () => {
       await expect(service.create('user-1', dto)).rejects.toBeInstanceOf(
         BadRequestException,
       );
+    });
+  });
+
+  describe('findPage', () => {
+    it('uses the first page of twenty runs when nothing is asked for', async () => {
+      await service.findPage({});
+
+      expect(repository.findAndCount).toHaveBeenCalledWith(
+        expect.objectContaining({ skip: 0, take: 20 }),
+      );
+    });
+
+    it('skips the runs of earlier pages', async () => {
+      await service.findPage({ page: 3, limit: 10 });
+
+      expect(repository.findAndCount).toHaveBeenCalledWith(
+        expect.objectContaining({ skip: 20, take: 10 }),
+      );
+    });
+
+    it('orders by time with the id breaking ties so pages do not overlap', async () => {
+      await service.findPage({});
+
+      expect(repository.findAndCount).toHaveBeenCalledWith(
+        expect.objectContaining({ order: { timeMs: 'ASC', id: 'ASC' } }),
+      );
+    });
+
+    it('returns the page items together with the total count', async () => {
+      const runs = [makeRun({ id: 'a' }), makeRun({ id: 'b' })];
+      repository.findAndCount.mockResolvedValue([runs, 42]);
+
+      await expect(service.findPage({ page: 2, limit: 2 })).resolves.toEqual({
+        items: runs,
+        total: 42,
+        page: 2,
+        limit: 2,
+      });
     });
   });
 
