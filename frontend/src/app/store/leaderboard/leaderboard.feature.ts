@@ -1,7 +1,7 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { GameLeaderboard } from '../../core/models/leaderboard.model';
 import { LeaderboardActions } from './leaderboard.actions';
-
+import { AuthActions } from '../auth/auth.actions';
 export interface LeaderboardState {
   leaderboard: GameLeaderboard | null;
   loading: boolean;
@@ -36,6 +36,7 @@ export const leaderboardFeature = createFeature({
       leaderboard: null,
       error,
     })),
+    on(AuthActions.logout, AuthActions.loginSuccess, () => initialState),
   ),
 });
 

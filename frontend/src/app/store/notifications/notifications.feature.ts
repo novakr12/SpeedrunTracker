@@ -1,6 +1,6 @@
 import { createFeature, createReducer, on } from '@ngrx/store';
 import { NotificationsActions } from './notifications.actions';
-
+import { AuthActions } from '../auth/auth.actions';
 export const MAX_VISIBLE_NOTIFICATIONS = 3;
 
 export interface Notification {
@@ -30,6 +30,7 @@ export const notificationsFeature = createFeature({
       ...state,
       items: state.items.filter((item) => item.id !== id),
     })),
+    on(AuthActions.logout, AuthActions.loginSuccess, () => initialState),
   ),
 });
 

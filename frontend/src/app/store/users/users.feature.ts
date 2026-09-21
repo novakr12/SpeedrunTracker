@@ -2,7 +2,7 @@ import { createFeature, createReducer, on } from '@ngrx/store';
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { ManagedUser } from '../../core/models/user.model';
 import { UsersActions } from './users.actions';
-
+import { AuthActions } from '../auth/auth.actions';
 export const bannedUsersAdapter = createEntityAdapter<ManagedUser>();
 
 export interface UsersState extends EntityState<ManagedUser> {
@@ -43,6 +43,7 @@ export const usersFeature = createFeature({
       UsersActions.unbanFailure,
       (state, { error }) => ({ ...state, error }),
     ),
+    on(AuthActions.logout, AuthActions.loginSuccess, () => initialState),
   ),
   extraSelectors: ({ selectUsersState }) => {
     const { selectAll } = bannedUsersAdapter.getSelectors(selectUsersState);

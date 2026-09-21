@@ -2,7 +2,7 @@ import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { Category } from '../../core/models/game.model';
 import { CategoriesActions } from './categories.actions';
-
+import { AuthActions } from '../auth/auth.actions';
 export const categoriesAdapter = createEntityAdapter<Category>();
 
 export interface CategoriesState extends EntityState<Category> {
@@ -53,6 +53,7 @@ export const categoriesFeature = createFeature({
       ...state,
       error,
     })),
+    on(AuthActions.logout, AuthActions.loginSuccess, () => initialState),
   ),
   extraSelectors: ({ selectCategoriesState }) => {
     const { selectAll } = categoriesAdapter.getSelectors(selectCategoriesState);

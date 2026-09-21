@@ -2,7 +2,7 @@ import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { Run } from '../../core/models/run.model';
 import { RunsActions } from './runs.actions';
-
+import { AuthActions } from '../auth/auth.actions';
 export const runsAdapter = createEntityAdapter<Run>({
   sortComparer: (a, b) => a.timeMs - b.timeMs,
 });
@@ -35,6 +35,7 @@ export const runsFeature = createFeature({
       runsAdapter.upsertOne(run, state),
     ),
     on(RunsActions.reviewFailure, (state, { error }) => ({ ...state, error })),
+    on(AuthActions.logout, AuthActions.loginSuccess, () => initialState),
   ),
   extraSelectors: ({ selectRunsState }) => {
     const { selectAll, selectTotal } = runsAdapter.getSelectors(

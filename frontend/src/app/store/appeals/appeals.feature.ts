@@ -2,7 +2,7 @@ import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { BanAppeal } from '../../core/models/appeal.model';
 import { AppealsActions } from './appeals.actions';
-
+import { AuthActions } from '../auth/auth.actions';
 export const appealsAdapter = createEntityAdapter<BanAppeal>({
   sortComparer: (a, b) => b.createdAt.localeCompare(a.createdAt),
 });
@@ -58,6 +58,7 @@ export const appealsFeature = createFeature({
       ...state,
       error,
     })),
+    on(AuthActions.logout, AuthActions.loginSuccess, () => initialState),
   ),
   extraSelectors: ({ selectAppealsState }) => {
     const { selectAll } = appealsAdapter.getSelectors(selectAppealsState);

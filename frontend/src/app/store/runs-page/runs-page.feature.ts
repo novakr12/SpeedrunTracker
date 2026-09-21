@@ -1,7 +1,7 @@
 import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 import { Run } from '../../core/models/run.model';
 import { RunsPageActions } from './runs-page.actions';
-
+import { AuthActions } from '../auth/auth.actions';
 export const DEFAULT_RUNS_PAGE_SIZE = 20;
 
 export interface RunsPageState {
@@ -46,6 +46,7 @@ export const runsPageFeature = createFeature({
       loading: false,
       error,
     })),
+    on(AuthActions.logout, AuthActions.loginSuccess, () => initialState),
   ),
   extraSelectors: ({ selectTotal, selectLimit }) => ({
     selectPageCount: createSelector(selectTotal, selectLimit, (total, limit) =>

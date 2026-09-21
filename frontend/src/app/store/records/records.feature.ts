@@ -2,7 +2,7 @@ import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { PersonalBest } from '../../core/models/leaderboard.model';
 import { RecordsActions } from './records.actions';
-
+import { AuthActions } from '../auth/auth.actions';
 export const personalBestsAdapter = createEntityAdapter<PersonalBest>({
   selectId: (best) => best.categoryId,
   sortComparer: (a, b) =>
@@ -37,6 +37,7 @@ export const recordsFeature = createFeature({
       loading: false,
       error,
     })),
+    on(AuthActions.logout, AuthActions.loginSuccess, () => initialState),
   ),
   extraSelectors: ({ selectRecordsState }) => {
     const { selectAll } = personalBestsAdapter.getSelectors(selectRecordsState);

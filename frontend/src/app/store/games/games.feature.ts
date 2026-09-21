@@ -2,7 +2,7 @@ import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { Game } from '../../core/models/game.model';
 import { GamesActions } from './games.actions';
-
+import { AuthActions } from '../auth/auth.actions';
 export const gamesAdapter = createEntityAdapter<Game>();
 
 export interface GamesState extends EntityState<Game> {
@@ -70,6 +70,7 @@ export const gamesFeature = createFeature({
       GamesActions.followFailure,
       (state, { error }) => ({ ...state, error }),
     ),
+    on(AuthActions.logout, AuthActions.loginSuccess, () => initialState),
   ),
   extraSelectors: ({
     selectGamesState,
