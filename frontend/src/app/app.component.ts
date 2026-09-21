@@ -46,9 +46,15 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     const token = localStorage.getItem('token');
     const rawUser = localStorage.getItem('user');
-    if (token && rawUser) {
+    if (!token || !rawUser) {
+      return;
+    }
+    try {
       const user = JSON.parse(rawUser) as AuthUser;
       this.store.dispatch(AuthActions.restoreSession({ token, user }));
+    } catch {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
     }
   }
 
