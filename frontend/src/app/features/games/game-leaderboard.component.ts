@@ -566,6 +566,13 @@ export class GameLeaderboardComponent implements OnInit, OnDestroy {
   }
 
   deleteCategory(id: string): void {
+    if (
+      !confirm(
+        'Delete this category? Its splits and all runs submitted in it will be deleted too.',
+      )
+    ) {
+      return;
+    }
     this.store.dispatch(CategoriesActions.delete({ id }));
   }
 

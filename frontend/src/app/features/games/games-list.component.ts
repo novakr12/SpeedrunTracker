@@ -217,6 +217,13 @@ export class GamesListComponent implements OnInit, OnDestroy {
   }
 
   onRemove(id: string): void {
+    if (
+      !confirm(
+        'Delete this game? Its categories, splits and all submitted runs will be deleted too.',
+      )
+    ) {
+      return;
+    }
     this.store.dispatch(GamesActions.delete({ id }));
   }
 
