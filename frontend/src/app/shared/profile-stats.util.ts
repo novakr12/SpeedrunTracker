@@ -8,7 +8,6 @@ export interface ProfileStats {
   distinctGames: number;
   distinctCategories: number;
   mostRunGame: { game: string; count: number } | null;
-  fastestRun: { game: string; category: string; timeMs: number } | null;
 }
 
 export function computeProfileStats(runs: Run[]): ProfileStats {
@@ -36,18 +35,6 @@ export function computeProfileStats(runs: Run[]): ProfileStats {
       .map(([game, count]) => ({ game, count }))
       .sort((a, b) => b.count - a.count)[0] ?? null;
 
-  const fastest = accepted.reduce<Run | null>(
-    (best, run) => (!best || run.timeMs < best.timeMs ? run : best),
-    null,
-  );
-  const fastestRun = fastest
-    ? {
-        game: fastest.game?.title ?? 'Unknown',
-        category: fastest.category?.name ?? 'Unknown',
-        timeMs: fastest.timeMs,
-      }
-    : null;
-
   return {
     totalRuns,
     totalTimeMs,
@@ -56,6 +43,5 @@ export function computeProfileStats(runs: Run[]): ProfileStats {
     distinctGames,
     distinctCategories,
     mostRunGame,
-    fastestRun,
   };
 }

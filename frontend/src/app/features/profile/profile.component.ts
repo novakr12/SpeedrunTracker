@@ -83,15 +83,6 @@ import { selectFollowedGames } from '../../store/games/games.feature';
               >
             </li>
           }
-          @if (stats.fastestRun) {
-            <li>
-              <span>Personal best</span>
-              <strong>
-                {{ stats.fastestRun.timeMs | msToTime: 'milliseconds' }} —
-                {{ stats.fastestRun.game }} / {{ stats.fastestRun.category }}
-              </strong>
-            </li>
-          }
           @if (stats.totalRuns === 0) {
             <li class="muted">No runs yet — submit one from the Games page!</li>
           } @else if (stats.verifiedRuns === 0) {
