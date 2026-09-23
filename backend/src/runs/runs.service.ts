@@ -16,6 +16,7 @@ import {
   GameLeaderboard,
   LeaderboardEntry,
   PersonalBest,
+  RunnerProfile,
   SegmentBest,
 } from './dto/leaderboard.types';
 import { AuthUser } from '../auth/decorators/current-user.decorator';
@@ -91,6 +92,22 @@ export class RunsService {
       take: limit,
     });
     return { items, total, page, limit };
+  }
+
+  async runnerProfile(userId: string): Promise<RunnerProfile> {
+    const user = await this.usersService.findOne(userId);
+    const [personalBests, totalRuns] = await Promise.all([
+      this.personalBests(userId),
+      this.runsRepository.count({ where: { userId, status: 'accepted' } }),
+    ]);
+
+    return {
+      id: user.id,
+      username: user.username,
+      memberSince: user.createdAt,
+      totalRuns,
+      personalBests,
+    };
   }
 
   async personalBests(userId: string): Promise<PersonalBest[]> {

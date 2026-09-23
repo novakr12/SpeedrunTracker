@@ -53,6 +53,12 @@ export class RunsController {
     return this.runsService.personalBests(user.userId);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('runner/:userId')
+  runnerProfile(@Param('userId', ParseUUIDPipe) userId: string) {
+    return this.runsService.runnerProfile(userId);
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.runsService.findOne(id);

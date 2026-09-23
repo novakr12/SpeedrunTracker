@@ -65,6 +65,14 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'runners/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/profile/runner-profile.component').then(
+        (m) => m.RunnerProfileComponent,
+      ),
+  },
+  {
     path: 'moderation',
     canActivate: [adminGuard],
     loadComponent: () =>

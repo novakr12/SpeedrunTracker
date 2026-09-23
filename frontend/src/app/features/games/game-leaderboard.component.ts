@@ -205,7 +205,11 @@ interface SplitRow {
                         <span class="wr" title="World record">WR</span>
                       }
                     </td>
-                    <td>{{ entry.username }}</td>
+                    <td>
+                      <a class="runner" [routerLink]="['/runners', entry.userId]">{{
+                        entry.username
+                      }}</a>
+                    </td>
                     <td class="time">
                       {{ entry.timeMs | msToTime: 'milliseconds' }}
                       @if (entry.segments.length) {
@@ -222,6 +226,7 @@ interface SplitRow {
                     <td>
                       @if (entry.videoUrl) {
                         <a
+                          class="watch"
                           [href]="entry.videoUrl"
                           target="_blank"
                           rel="noopener"

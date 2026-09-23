@@ -51,3 +51,11 @@ export interface PersonalBest {
   playedAt: string | null;
   isWorldRecord: boolean;
 }
+
+export interface RunnerProfile {
+  id: string;
+  username: string;
+  memberSince: string;
+  totalRuns: number;
+  personalBests: PersonalBest[];
+}

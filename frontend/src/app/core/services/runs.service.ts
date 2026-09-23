@@ -2,7 +2,11 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CreateRunDto, ReviewRunDto, Run } from '../models/run.model';
-import { GameLeaderboard, PersonalBest } from '../models/leaderboard.model';
+import {
+  GameLeaderboard,
+  PersonalBest,
+  RunnerProfile,
+} from '../models/leaderboard.model';
 import { Page } from '../models/page.model';
 
 @Injectable({ providedIn: 'root' })
@@ -26,6 +30,10 @@ export class RunsService {
 
   getPersonalBests(): Observable<PersonalBest[]> {
     return this.http.get<PersonalBest[]>(`${this.base}/personal-bests`);
+  }
+
+  getRunnerProfile(userId: string): Observable<RunnerProfile> {
+    return this.http.get<RunnerProfile>(`${this.base}/runner/${userId}`);
   }
 
   create(dto: CreateRunDto): Observable<Run> {
