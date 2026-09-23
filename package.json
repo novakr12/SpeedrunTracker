@@ -12,6 +12,7 @@
     "db:down": "docker compose down",
     "backend": "npm run start:dev --workspace backend",
     "frontend": "npm start --workspace frontend",
+    "seed": "node backend/scripts/seed.js",
     "test": "npm test --workspaces --if-present"
   }
 }
