@@ -7,7 +7,7 @@ import {
 import { AsyncPipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { combineLatest, map } from 'rxjs';
+import { BehaviorSubject, combineLatest, map } from 'rxjs';
 import { MsToTimePipe } from '../../shared/ms-to-time.pipe';
 import { banStateOf } from '../../shared/ban-state.util';
 import { RunsActions } from '../../store/runs/runs.actions';
@@ -152,8 +152,16 @@ type ModerationTab = 'runs' | 'accepted' | 'appeals' | 'banned';
         }
 
         @case ('accepted') {
+          <input
+            class="search"
+            type="search"
+            placeholder="Filter by runner…"
+            [ngModel]="acceptedFilter$ | async"
+            (ngModelChange)="acceptedFilter$.next($event)"
+          />
+
           <div class="list">
-            @for (run of accepted$ | async; track run.id) {
+            @for (run of acceptedView$ | async; track run.id) {
               <article class="run">
                 <div class="info">
                   <h3>{{ run.game?.title }} — {{ run.category?.name }}</h3>
@@ -378,6 +386,22 @@ export class ModerationComponent implements OnInit {
 
   readonly pending$ = this.store.select(selectPendingRuns);
   readonly accepted$ = this.store.select(selectAcceptedRuns);
+
+  readonly acceptedFilter$ = new BehaviorSubject<string>('');
+
+  readonly acceptedView$ = combineLatest([
+    this.accepted$,
+    this.acceptedFilter$,
+  ]).pipe(
+    map(([runs, filter]) => {
+      const term = filter.trim().toLowerCase();
+      return term
+        ? runs.filter((run) =>
+            (run.user?.username ?? '').toLowerCase().includes(term),
+          )
+        : runs;
+    }),
+  );
   readonly banned$ = this.store.select(selectBannedUsers);
   readonly resolvedAppeals$ = this.store.select(selectResolvedAppeals);
 

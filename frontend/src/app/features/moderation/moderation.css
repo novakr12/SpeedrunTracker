@@ -261,6 +261,23 @@ h2 {
   overflow-wrap: anywhere;
 }
 
+.search {
+  width: 100%;
+  max-width: 320px;
+  margin-bottom: 0.9rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--fg);
+  font-size: 0.85rem;
+}
+
+.search:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
 .hint {
   margin: 0.15rem 0 0;
   font-size: 0.75rem;
