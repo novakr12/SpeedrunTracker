@@ -189,8 +189,21 @@ h2 {
 }
 
 .unban {
-  background: var(--surface-2);
   padding: 0.5rem 1rem;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+
+.unban:hover {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 
 .muted {
@@ -248,7 +261,7 @@ h2 {
   overflow-wrap: anywhere;
 }
 
-.appeal-row .hint {
+.hint {
   margin: 0.15rem 0 0;
   font-size: 0.75rem;
   color: var(--dim);

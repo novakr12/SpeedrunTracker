@@ -235,6 +235,34 @@ th {
   font-weight: 600;
 }
 
+.runner {
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.runner:hover {
+  color: var(--accent);
+}
+
+.watch {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+}
+
+.watch:hover {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
 .muted {
   color: var(--dim);
 }
@@ -244,19 +272,25 @@ th {
 }
 
 button.verified-by {
-  padding: 0;
-  border: none;
-  background: none;
-  color: var(--accent);
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--muted);
   font: inherit;
-  font-size: 0.85rem;
-  text-decoration: underline dotted;
-  text-underline-offset: 3px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   cursor: pointer;
 }
 
-button.verified-by:hover {
-  text-decoration-style: solid;
+button.verified-by:hover,
+button.verified-by[aria-expanded='true'] {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+  color: var(--accent);
 }
 
 .review-popover {
