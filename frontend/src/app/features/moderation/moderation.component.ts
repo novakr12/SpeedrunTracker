@@ -11,7 +11,11 @@ import { combineLatest, map } from 'rxjs';
 import { MsToTimePipe } from '../../shared/ms-to-time.pipe';
 import { banStateOf } from '../../shared/ban-state.util';
 import { RunsActions } from '../../store/runs/runs.actions';
-import { selectAllRuns, selectPendingRuns } from '../../store/runs/runs.feature';
+import {
+  selectAcceptedRuns,
+  selectAllRuns,
+  selectPendingRuns,
+} from '../../store/runs/runs.feature';
 import { UsersActions } from '../../store/users/users.actions';
 import { selectBannedUsers } from '../../store/users/users.feature';
 import { AppealsActions } from '../../store/appeals/appeals.actions';
@@ -20,7 +24,7 @@ import {
   selectResolvedAppeals,
 } from '../../store/appeals/appeals.feature';
 
-type ModerationTab = 'runs' | 'appeals' | 'banned';
+type ModerationTab = 'runs' | 'accepted' | 'appeals' | 'banned';
 
 @Component({
   selector: 'app-moderation',
@@ -42,6 +46,17 @@ type ModerationTab = 'runs' | 'appeals' | 'banned';
             Run verification
             @if (counts.runs) {
               <span class="tab-count">{{ counts.runs }}</span>
+            }
+          </button>
+          <button
+            type="button"
+            class="tab"
+            [class.active]="activeTab === 'accepted'"
+            (click)="activeTab = 'accepted'"
+          >
+            Accepted runs
+            @if (counts.accepted) {
+              <span class="tab-count">{{ counts.accepted }}</span>
             }
           </button>
           <button
@@ -132,6 +147,61 @@ type ModerationTab = 'runs' | 'appeals' | 'banned';
               </article>
             } @empty {
               <p class="muted">No runs waiting for verification.</p>
+            }
+          </div>
+        }
+
+        @case ('accepted') {
+          <div class="list">
+            @for (run of accepted$ | async; track run.id) {
+              <article class="run">
+                <div class="info">
+                  <h3>{{ run.game?.title }} — {{ run.category?.name }}</h3>
+                  <p class="meta">
+                    by <strong>{{ run.user?.username }}</strong> ·
+                    <span class="time">{{
+                      run.timeMs | msToTime: 'milliseconds'
+                    }}</span>
+                  </p>
+                  <p class="meta">
+                    Verified by
+                    <strong>{{ run.reviewedBy?.username || 'unknown' }}</strong>
+                    @if (run.reviewedAt) {
+                      on {{ run.reviewedAt | date: 'medium' }}
+                    }
+                  </p>
+                  @if (run.videoUrl) {
+                    <a
+                      class="video"
+                      [href]="run.videoUrl"
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      Watch video
+                    </a>
+                  } @else {
+                    <span class="no-video">No video provided</span>
+                  }
+                </div>
+
+                <div class="review">
+                  <input
+                    type="text"
+                    placeholder="Reason for withdrawing"
+                    [(ngModel)]="comments[run.id]"
+                  />
+                  <div class="buttons">
+                    <button class="reject" (click)="withdraw(run.id)">
+                      Withdraw
+                    </button>
+                  </div>
+                  <p class="hint">
+                    Removes the run from leaderboards and records.
+                  </p>
+                </div>
+              </article>
+            } @empty {
+              <p class="muted">No verified runs yet.</p>
             }
           </div>
         }
@@ -307,6 +377,7 @@ export class ModerationComponent implements OnInit {
   activeTab: ModerationTab = 'runs';
 
   readonly pending$ = this.store.select(selectPendingRuns);
+  readonly accepted$ = this.store.select(selectAcceptedRuns);
   readonly banned$ = this.store.select(selectBannedUsers);
   readonly resolvedAppeals$ = this.store.select(selectResolvedAppeals);
 
@@ -334,11 +405,13 @@ export class ModerationComponent implements OnInit {
 
   readonly counts$ = combineLatest([
     this.pending$,
+    this.accepted$,
     this.store.select(selectOpenAppeals),
     this.banned$,
   ]).pipe(
-    map(([pending, appeals, banned]) => ({
+    map(([pending, accepted, appeals, banned]) => ({
       runs: pending.length,
+      accepted: accepted.length,
       appeals: appeals.length,
       banned: banned.length,
     })),
@@ -370,6 +443,19 @@ export class ModerationComponent implements OnInit {
   }
 
   reject(id: string): void {
+    this.store.dispatch(
+      RunsActions.review({ id, status: 'rejected', comment: this.comments[id] }),
+    );
+  }
+
+  withdraw(id: string): void {
+    if (
+      !confirm(
+        'Withdraw this run? It will be rejected and disappear from leaderboards, records and progress charts.',
+      )
+    ) {
+      return;
+    }
     this.store.dispatch(
       RunsActions.review({ id, status: 'rejected', comment: this.comments[id] }),
     );

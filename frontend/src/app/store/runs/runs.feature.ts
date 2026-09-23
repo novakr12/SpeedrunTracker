@@ -47,6 +47,9 @@ export const runsFeature = createFeature({
       selectPendingRuns: createSelector(selectAll, (runs) =>
         runs.filter((run) => run.status === 'pending'),
       ),
+      selectAcceptedRuns: createSelector(selectAll, (runs) =>
+        runs.filter((run) => run.status === 'accepted'),
+      ),
     };
   },
 });
@@ -57,4 +60,5 @@ export const {
   selectAllRuns,
   selectRunsTotal,
   selectPendingRuns,
+  selectAcceptedRuns,
 } = runsFeature;
