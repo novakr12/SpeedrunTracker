@@ -1,8 +1,17 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, concatMap, exhaustMap, map, of, switchMap } from 'rxjs';
+import {
+  catchError,
+  concatMap,
+  exhaustMap,
+  filter,
+  map,
+  of,
+  switchMap,
+} from 'rxjs';
 import { AppealsActions } from './appeals.actions';
 import { AuthActions } from '../auth/auth.actions';
+import { UsersActions } from '../users/users.actions';
 import { AppealsService } from '../../core/services/appeals.service';
 import { toMessage } from '../../core/utils/http-error';
 
@@ -43,6 +52,14 @@ export class AppealsEffects {
           ),
         ),
       ),
+    ),
+  );
+
+  refreshBannedOnAccept$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AppealsActions.resolveSuccess),
+      filter(({ appeal }) => appeal.status === 'accepted'),
+      map(() => UsersActions.loadBanned()),
     ),
   );
 

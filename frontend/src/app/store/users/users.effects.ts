@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, concatMap, map, of, switchMap } from 'rxjs';
 import { UsersActions } from './users.actions';
+import { RunsActions } from '../runs/runs.actions';
 import { UsersService } from '../../core/services/users.service';
 import { toMessage } from '../../core/utils/http-error';
 
@@ -49,6 +50,13 @@ export class UsersEffects {
           ),
         ),
       ),
+    ),
+  );
+
+  reloadRunsOnBanChange$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(UsersActions.banSuccess, UsersActions.unbanSuccess),
+      map(() => RunsActions.load()),
     ),
   );
 }

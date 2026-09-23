@@ -7,18 +7,23 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository } from 'typeorm';
+import { Like, Not, Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { User } from './user.entity';
+import { Run } from '../runs/run.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { BanUserDto } from './dto/ban-user.dto';
+
+export const AUTO_REJECT_PREFIX = 'Auto-rejected: user banned';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    @InjectRepository(Run)
+    private readonly runsRepository: Repository<Run>,
   ) {}
 
   async create(dto: CreateUserDto): Promise<User> {
@@ -146,7 +151,7 @@ export class UsersService {
     return user.bannedUntil.getTime() > Date.now();
   }
 
-  async ban(id: string, dto: BanUserDto): Promise<User> {
+  async ban(id: string, dto: BanUserDto, actorId?: string): Promise<User> {
     const user = await this.findOne(id);
     if (user.role === 'admin') {
       throw new ForbiddenException('Admins cannot be banned');
@@ -158,7 +163,21 @@ export class UsersService {
     user.bannedUntil = dto.durationDays
       ? new Date(Date.now() + dto.durationDays * 24 * 60 * 60 * 1000)
       : null;
-    return this.usersRepository.save(user);
+    const banned = await this.usersRepository.save(user);
+
+    await this.runsRepository.update(
+      { userId: id, status: 'pending' },
+      {
+        status: 'rejected',
+        reviewComment: dto.reason
+          ? `Auto-rejected: user banned (${dto.reason})`
+          : 'Auto-rejected: user banned',
+        reviewedAt: new Date(),
+        reviewedById: actorId ?? null,
+      },
+    );
+
+    return banned;
   }
 
   async unban(id: string): Promise<User> {
@@ -168,7 +187,23 @@ export class UsersService {
     user.banReason = null;
     user.bannedAt = null;
     user.banRunId = null;
-    return this.usersRepository.save(user);
+    const unbanned = await this.usersRepository.save(user);
+
+    await this.runsRepository.update(
+      {
+        userId: id,
+        status: 'rejected',
+        reviewComment: Like(`${AUTO_REJECT_PREFIX}%`),
+      },
+      {
+        status: 'pending',
+        reviewComment: null,
+        reviewedAt: null,
+        reviewedById: null,
+      },
+    );
+
+    return unbanned;
   }
 
   async findBanned(): Promise<User[]> {

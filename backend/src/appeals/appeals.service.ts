@@ -78,6 +78,12 @@ export class AppealsService {
     appeal.status = dto.status;
     appeal.adminComment = dto.comment ?? null;
     appeal.resolvedAt = new Date();
-    return this.appealsRepository.save(appeal);
+    const resolved = await this.appealsRepository.save(appeal);
+
+    if (dto.status === 'accepted') {
+      await this.usersService.unban(appeal.userId);
+    }
+
+    return resolved;
   }
 }

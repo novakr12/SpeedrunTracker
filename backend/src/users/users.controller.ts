@@ -51,8 +51,12 @@ export class UsersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('admin')
   @Post(':id/ban')
-  ban(@Param('id', ParseUUIDPipe) id: string, @Body() dto: BanUserDto) {
-    return this.usersService.ban(id, dto);
+  ban(
+    @CurrentUser() actor: AuthUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: BanUserDto,
+  ) {
+    return this.usersService.ban(id, dto, actor.userId);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
