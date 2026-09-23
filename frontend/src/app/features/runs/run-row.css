@@ -4,6 +4,15 @@ td {
   border-bottom: 1px solid var(--line);
 }
 
+.runner {
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.runner:hover {
+  color: var(--accent);
+}
+
 .time {
   font-variant-numeric: tabular-nums;
   font-weight: 600;

@@ -6,6 +6,7 @@ import {
   Output,
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { MsToTimePipe } from '../../shared/ms-to-time.pipe';
 import { Run, RunStatus } from '../../core/models/run.model';
 
@@ -13,11 +14,19 @@ import { Run, RunStatus } from '../../core/models/run.model';
   selector: 'tr[app-run-row]',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DatePipe, MsToTimePipe],
+  imports: [DatePipe, RouterLink, MsToTimePipe],
   template: `
     <td>{{ run.game?.title || '—' }}</td>
     <td>{{ run.category?.name || '—' }}</td>
-    <td>{{ run.user?.username || '—' }}</td>
+    <td>
+      @if (run.userId && run.user?.username) {
+        <a class="runner" [routerLink]="['/runners', run.userId]">{{
+          run.user?.username
+        }}</a>
+      } @else {
+        —
+      }
+    </td>
     <td class="time">{{ run.timeMs | msToTime: 'milliseconds' }}</td>
     <td class="status-cell">
       @if (run.status === 'pending') {
