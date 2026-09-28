@@ -1,16 +1,20 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { UsersModule } from './users/users.module';
 import { GamesModule } from './games/games.module';
 import { CategoriesModule } from './categories/categories.module';
 import { RunsModule } from './runs/runs.module';
 import { AuthModule } from './auth/auth.module';
 import { AppealsModule } from './appeals/appeals.module';
+import { RateLimitGuard } from './auth/guards/rate-limit.guard';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ThrottlerModule.forRoot([{ ttl: 60000, limit: 60 }]),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
@@ -33,5 +37,6 @@ import { AppealsModule } from './appeals/appeals.module';
     AuthModule,
     AppealsModule,
   ],
+  providers: [{ provide: APP_GUARD, useClass: RateLimitGuard }],
 })
 export class AppModule {}
